@@ -12,7 +12,6 @@ fun CharactersResponse.toVo(): CharactersVO = CharactersVO(
 
 fun CharacterResponse.toVO(): CharacterVO = CharacterVO(
     affiliation = affiliation,
-    deletedAt = deletedAt,
     description = description,
     gender = gender,
     id = id,
