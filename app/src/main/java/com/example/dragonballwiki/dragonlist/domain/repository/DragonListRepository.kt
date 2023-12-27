@@ -12,7 +12,7 @@ interface DragonListRepository {
 
 class DragonListRepositoryImpl(private val remoteDataSource: DragonListRemoteDataSource): DragonListRepository {
     override fun getCharacterListRemote(): Flow<CharactersVO> = flow {
-        remoteDataSource.getCharacterList()
+        emit(remoteDataSource.getCharacterList())
     }
 
 }

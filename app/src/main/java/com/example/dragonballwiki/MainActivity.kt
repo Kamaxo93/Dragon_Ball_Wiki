@@ -1,6 +1,7 @@
 package com.example.dragonballwiki
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -30,8 +31,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    dragonListViewModel.getCharacterList()
-                    DragonListScreen()
+                    DragonListScreen(dragonListViewModel) {
+                        Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

@@ -4,7 +4,7 @@ import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import java.lang.Error
 
 sealed interface CharacterUiState {
-    data object Login : CharacterUiState
+    data object Loading : CharacterUiState
 
     data class Success(val charactersVO: CharactersVO) : CharacterUiState
 
