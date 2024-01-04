@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.core.di
 
+import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
 import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListService
 import dagger.Module
 import dagger.Provides
@@ -37,5 +38,11 @@ class NetworkModule {
     @Singleton
     fun provideDragonListService(retrofit: Retrofit): DragonListService {
         return retrofit.create(DragonListService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCharacterDetailService(retrofit: Retrofit): CharacterDetailService {
+        return retrofit.create(CharacterDetailService::class.java)
     }
 }

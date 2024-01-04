@@ -6,13 +6,5 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 interface DragonListRepository {
-
     fun getCharacterListRemote(): Flow<CharactersVO>
-}
-
-class DragonListRepositoryImpl(private val remoteDataSource: DragonListRemoteDataSource): DragonListRepository {
-    override fun getCharacterListRemote(): Flow<CharactersVO> = flow {
-        emit(remoteDataSource.getCharacterList())
-    }
-
 }

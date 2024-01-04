@@ -21,6 +21,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,7 @@ import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 fun DragonListScreen(dragonListViewModel: DragonListViewModel, onClickElement: (String) -> Unit) {
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
 
     val uiState by produceState<CharacterUiState>(
         initialValue = CharacterUiState.Loading,

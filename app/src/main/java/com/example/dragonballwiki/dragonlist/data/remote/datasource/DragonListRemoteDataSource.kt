@@ -6,6 +6,7 @@ import com.example.dragonballwiki.core.isOnline
 import com.example.dragonballwiki.dragonlist.data.remote.mapper.toVo
 import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListService
 import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
+import java.lang.Exception
 
 interface DragonListRemoteDataSource {
     suspend fun getCharacterList(): CharactersVO

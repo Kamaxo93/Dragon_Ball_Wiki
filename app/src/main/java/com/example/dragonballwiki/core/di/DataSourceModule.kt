@@ -1,6 +1,9 @@
 package com.example.dragonballwiki.core.di
 
 import android.content.Context
+import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSource
+import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSourceImpl
+import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSource
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSourceImpl
 import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListService
@@ -18,8 +21,20 @@ class DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideDragonListRemoteDataSource(service: DragonListService, @ApplicationContext context: Context): DragonListRemoteDataSource {
+    fun provideDragonListRemoteDataSource(
+        service: DragonListService,
+        @ApplicationContext context: Context
+    ): DragonListRemoteDataSource {
         return DragonListRemoteDataSourceImpl(service, context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCharacterDetailRemoteDataSource(
+        service: CharacterDetailService,
+        @ApplicationContext context: Context
+    ): CharacterDetailDataSource {
+        return CharacterDetailDataSourceImpl(service, context)
     }
 
 }
