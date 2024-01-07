@@ -1,5 +1,7 @@
 package com.example.dragonballwiki.dragonlist.ui.screen
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,7 +41,7 @@ import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 
 @Composable
-fun DragonListScreen(dragonListViewModel: DragonListViewModel, onClickElement: (String) -> Unit) {
+fun DragonListScreen(dragonListViewModel: DragonListViewModel, onClickElement: (String) -> Unit, onClickErrorList: () -> Unit) {
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
@@ -56,7 +58,15 @@ fun DragonListScreen(dragonListViewModel: DragonListViewModel, onClickElement: (
 
     when (uiState) {
         is CharacterUiState.Error -> {
-
+            Box(modifier = Modifier.fillMaxSize().clickable { dragonListViewModel.uiState.replayCache }) {
+                Text(
+                    text = "La lista está vacia",
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 32.sp,
+                    color = Color.White,
+                    modifier = Modifier.padding(8.dp).align(Alignment.Center)
+                )
+            }
         }
 
         is CharacterUiState.Loading -> {
@@ -81,6 +91,10 @@ fun DragonListScreen(dragonListViewModel: DragonListViewModel, onClickElement: (
                         )
                     })
             }
+        }
+
+        is CharacterUiState.ErrorGeneric -> {
+            Log.i("manolete", "DragonListScreen: ${(uiState as CharacterUiState.ErrorGeneric)}")
         }
     }
 }

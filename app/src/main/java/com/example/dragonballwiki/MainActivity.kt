@@ -31,9 +31,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DragonListScreen(dragonListViewModel) {
+                    DragonListScreen(dragonListViewModel, onClickElement = {
                         Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-                    }
+                    }, onClickErrorList = {
+                        dragonListViewModel.reloadList()
+                    })
                 }
             }
         }
