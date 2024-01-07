@@ -1,10 +1,10 @@
 package com.example.dragonballwiki.dragonlist.ui.screen
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
@@ -41,10 +42,9 @@ import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 
 @Composable
-fun DragonListScreen(dragonListViewModel: DragonListViewModel, onClickElement: (String) -> Unit, onClickErrorList: () -> Unit) {
+fun DragonListScreen(dragonListViewModel: DragonListViewModel, navigationController: NavHostController, onClickElement:  (String) -> Unit, onClickErrorList: () -> Unit) {
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val context = LocalContext.current
 
     val uiState by produceState<CharacterUiState>(
         initialValue = CharacterUiState.Loading,
@@ -55,16 +55,21 @@ fun DragonListScreen(dragonListViewModel: DragonListViewModel, onClickElement: (
             dragonListViewModel.uiState.collect { value = it }
         }
     }
+    dragonListViewModel.dataState()
 
     when (uiState) {
         is CharacterUiState.Error -> {
-            Box(modifier = Modifier.fillMaxSize().clickable { dragonListViewModel.uiState.replayCache }) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .clickable { dragonListViewModel.reloadList() }) {
                 Text(
                     text = "La lista está vacia",
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 32.sp,
-                    color = Color.White,
-                    modifier = Modifier.padding(8.dp).align(Alignment.Center)
+                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.Center)
                 )
             }
         }

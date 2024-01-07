@@ -1,6 +1,7 @@
 package com.example.dragonballwiki.dragonlist.data.remote.datasource
 
 import android.content.Context
+import android.util.Log
 import com.example.dragonballwiki.core.ErrorResponse
 import com.example.dragonballwiki.core.NetWorkError
 import com.example.dragonballwiki.core.Resource

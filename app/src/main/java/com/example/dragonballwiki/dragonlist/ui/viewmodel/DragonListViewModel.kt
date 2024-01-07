@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.dragonlist.ui.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dragonballwiki.core.NetWorkError
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.internal.notify
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,33 +30,36 @@ class DragonListViewModel @Inject constructor(
     private val getCharacterListUseCase: GetCharacterListUseCase
 
 ) : ViewModel() {
+    private val _uiSate = MutableStateFlow<CharacterUiState>(CharacterUiState.Loading)
+    val uiState = _uiSate.stateIn(viewModelScope, SharingStarted.WhileSubscribed(50000), CharacterUiState.Loading)
+    fun dataState() {
+        viewModelScope.launch {
+            getCharacterListUseCase().collect {
+                _uiSate.value = when (it) {
+                    is Resource.Success -> Success(
+                        it.data ?: CharactersVO(
+                            characterList = listOf()
+                        )
+                    )
 
-    val uiState = getCharacterListUseCase().map {
-        when (it) {
-            is Resource.Success -> Success(
-                it.data ?: CharactersVO(
-                    characterList = listOf()
-                )
-            )
-
-            is Resource.Error -> {
-                when (it) {
-                    is NetWorkError -> CharacterUiState.Error(it.message)
-                    else -> {
-                        CharacterUiState.Error(it.message)
+                    is Resource.Error -> {
+                        when (it) {
+                            is NetWorkError -> CharacterUiState.Error(it.message)
+                            else -> {
+                                CharacterUiState.Error(it.message)
+                            }
+                        }
                     }
+
+                    is Resource.ErrorsResponse ->
+                        CharacterUiState.Error(it.errorResponse?.message)
                 }
             }
 
-            is Resource.ErrorsResponse -> CharacterUiState.Error(it.errorResponse?.message)
         }
-    }.catch {
-        CharacterUiState.ErrorGeneric(it)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CharacterUiState.Loading)
+    }
 
     fun reloadList() {
-        viewModelScope.launch(Dispatchers.IO) {
-            getCharacterListUseCase().collect()
-        }
+        dataState()
     }
 }
