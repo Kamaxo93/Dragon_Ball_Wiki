@@ -8,11 +8,14 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.dragonballwiki.charactersdetail.ui.screen.CharacterDetailScreen
+import com.example.dragonballwiki.charactersdetail.ui.viewmodel.CharacterDetailViewModel
 import com.example.dragonballwiki.core.navigation.Routes
 import com.example.dragonballwiki.dragonlist.ui.screen.DragonListScreen
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
@@ -23,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val dragonListViewModel: DragonListViewModel by viewModels()
+    private val characterDetailViewModel: CharacterDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +37,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val context = LocalContext.current
                     val navigationController = rememberNavController()
                     NavHost(
                         navController = navigationController,
@@ -41,12 +44,20 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(route = Routes.DragonList.route) {
                             DragonListScreen(dragonListViewModel = dragonListViewModel,
-                                navigationController = navigationController,
                                 onClickElement = {
-                                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                    navigationController.navigate("Character_Detail/$it") {
+                                        launchSingleTop = true
+                                    }
                                 }, onClickErrorList = {
                                     dragonListViewModel.reloadList()
                                 })
+                        }
+
+                        composable(route = Routes.CharactersDetail.route) { backStackEntry ->
+                            CharacterDetailScreen(
+                                characterDetailViewModel,
+                                id = backStackEntry.arguments?.getString("id").orEmpty()
+                            )
                         }
                     }
                 }

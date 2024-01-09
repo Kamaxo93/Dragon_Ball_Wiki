@@ -35,6 +35,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.dragonballwiki.R
+import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
+import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
@@ -42,7 +44,11 @@ import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 
 @Composable
-fun DragonListScreen(dragonListViewModel: DragonListViewModel, navigationController: NavHostController, onClickElement:  (String) -> Unit, onClickErrorList: () -> Unit) {
+fun DragonListScreen(
+    dragonListViewModel: DragonListViewModel,
+    onClickElement: (String) -> Unit,
+    onClickErrorList: () -> Unit
+) {
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -61,7 +67,7 @@ fun DragonListScreen(dragonListViewModel: DragonListViewModel, navigationControl
         is CharacterUiState.Error -> {
             Box(modifier = Modifier
                 .fillMaxSize()
-                .clickable { dragonListViewModel.reloadList() }) {
+                .clickable { onClickErrorList() }) {
                 Text(
                     text = "La lista está vacia",
                     fontWeight = FontWeight.ExtraBold,
@@ -190,27 +196,6 @@ fun TextBreedAndGenreCharacter(breed: String, genre: String) {
         modifier = Modifier.padding(start = 16.dp, top = 8.dp)
     )
 }
-
-@Composable
-fun NameCharacter(nameCharacter: String, modifier: Modifier = Modifier) {
-    Text(
-        text = nameCharacter,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 32.sp,
-        color = Color.White,
-        modifier = modifier.padding(8.dp)
-    )
-}
-
-@Composable
-fun ImageCharacter(urlImage: String, modifier: Modifier = Modifier) {
-    AsyncImage(
-        model = urlImage,
-        contentDescription = null,
-        modifier = modifier
-    )
-}
-
 
 @Composable
 fun LoginBall(modifier: Modifier) {
