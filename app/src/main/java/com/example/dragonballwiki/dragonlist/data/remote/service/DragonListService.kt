@@ -8,6 +8,6 @@ import retrofit2.http.Query
 interface DragonListService {
 
     @GET("characters/")
-    suspend fun getCharacterList(@Query("limit") limit: Int): Response<CharactersResponse>
+    suspend fun getCharacterList(@Query("limit") limit: Int): CharactersResponse
 
 }

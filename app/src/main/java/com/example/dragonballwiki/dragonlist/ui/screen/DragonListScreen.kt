@@ -37,6 +37,8 @@ import coil.compose.AsyncImage
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
+import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharacter
+import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
@@ -164,37 +166,6 @@ fun InfoCharacter(character: CharacterVO, modifier: Modifier) {
             }
         }
     }
-}
-
-@Composable
-fun TextOtherData(title: String, data: String) {
-    Column {
-        Text(
-            text = title,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White,
-            modifier = Modifier.padding(start = 16.dp, top = 8.dp)
-        )
-        Text(
-            text = data,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFFFBC02D),
-            modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
-        )
-    }
-}
-
-@Composable
-fun TextBreedAndGenreCharacter(breed: String, genre: String) {
-    Text(
-        text = "$breed - $genre",
-        fontSize = 20.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = Color(0xFFFBC02D),
-        modifier = Modifier.padding(start = 16.dp, top = 8.dp)
-    )
 }
 
 @Composable

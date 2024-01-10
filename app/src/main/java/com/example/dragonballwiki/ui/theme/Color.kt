@@ -13,3 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 val ProgressIndicatorLogin = Color(0xFFE72F00)
 
 val TextNameCharacterColor = Color(0xFFD32B00)
+
+val ColumnBackgroundColor = Color(0xFF7A7E8B)
+val SuperiorBackgroundColor = Color(0xFF3C3E44)
+val InferiorBackgroundColor = Color(0xff272B33)
