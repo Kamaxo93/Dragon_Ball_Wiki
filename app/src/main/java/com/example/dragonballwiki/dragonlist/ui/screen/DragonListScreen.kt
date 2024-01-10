@@ -39,6 +39,7 @@ import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
+import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 
 @Composable
@@ -78,11 +79,7 @@ fun DragonListScreen(
         }
 
         is CharacterUiState.Loading -> {
-            Box(
-                modifier = Modifier,
-            ) {
-                LoginBall(modifier = Modifier.align(Alignment.Center))
-            }
+            LoginBall()
         }
 
         is CharacterUiState.Success -> {
@@ -164,39 +161,53 @@ fun InfoCharacter(character: CharacterVO, modifier: Modifier) {
 }
 
 @Composable
-fun LoginBall(modifier: Modifier) {
-    CircularProgressIndicator(modifier = modifier.size(150.dp), color = ProgressIndicatorLogin)
-    Image(
-        painter = painterResource(id = R.drawable.dragon_four_start),
-        contentDescription = "",
-        modifier.size(280.dp)
-    )
+fun LoginBall() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(InferiorBackgroundColor),
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(150.dp)
+                .align(Alignment.Center),
+            color = ProgressIndicatorLogin
+        )
+        Image(
+            painter = painterResource(id = R.drawable.dragon_four_start),
+            contentDescription = "",
+            Modifier
+                .align(Alignment.Center)
+                .size(280.dp)
+        )
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewRecycler() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Magenta),
-    ) {
-        DragonBallList(
-            CharactersVO(
-                listOf(
-                    CharacterVO(
-                        affiliation = "Sultan",
-                        description = "Genise",
-                        gender = "Rasheeda",
-                        id = 7065,
-                        image = "https://res.cloudinary.com/dgtgbyo76/image/upload/v1699139274/hcxz5pcptdevfud5mko0.webp",
-                        ki = "Ernst",
-                        maxKi = "Shana",
-                        name = "Krystie",
-                        race = "Yusuf"
-                    )
-                )
-            )
-        ) {}
-    }
+    LoginBall()
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.Magenta),
+//    ) {
+//        DragonBallList(
+//            CharactersVO(
+//                listOf(
+//                    CharacterVO(
+//                        affiliation = "Sultan",
+//                        description = "Genise",
+//                        gender = "Rasheeda",
+//                        id = 7065,
+//                        image = "https://res.cloudinary.com/dgtgbyo76/image/upload/v1699139274/hcxz5pcptdevfud5mko0.webp",
+//                        ki = "Ernst",
+//                        maxKi = "Shana",
+//                        name = "Krystie",
+//                        race = "Yusuf"
+//                    )
+//                )
+//            )
+//        ) {}
+//    }
 }

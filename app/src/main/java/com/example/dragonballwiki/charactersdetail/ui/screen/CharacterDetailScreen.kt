@@ -79,11 +79,7 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel) {
         }
 
         is CharacterDetailUiState.Loading -> {
-            Box(
-                modifier = Modifier,
-            ) {
-                LoginBall(modifier = Modifier.align(Alignment.Center))
-            }
+            LoginBall()
         }
 
         is CharacterDetailUiState.Success -> {
@@ -118,7 +114,10 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                 ) {
                     ImageCharacter(
                         characterDetailVO.image,
-                        Modifier.padding(8.dp).fillMaxHeight().fillMaxWidth(0.4f)
+                        Modifier
+                            .padding(8.dp)
+                            .fillMaxHeight()
+                            .fillMaxWidth(0.4f)
                     )
                     Column(Modifier.fillMaxWidth()) {
                         NameCharacter(
@@ -173,12 +172,13 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
 
 @Composable
 fun ItemTransformation(item: Transformation) {
-    Card(Modifier.padding(16.dp)) {
+    Card(Modifier.padding(12.dp)) {
         Column(
             Modifier
                 .size(200.dp)
                 .background(SuperiorBackgroundColor)
-                .padding(4.dp)) {
+                .padding(4.dp)
+        ) {
             ImageCharacter(
                 urlImage = item.image,
                 modifier = Modifier
