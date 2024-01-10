@@ -1,7 +1,6 @@
 package com.example.dragonballwiki.dragonlist.data.remote.service
 
 import com.example.dragonballwiki.dragonlist.data.remote.model.CharactersResponse
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 

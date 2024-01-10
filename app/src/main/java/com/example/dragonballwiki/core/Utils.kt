@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import kotlin.coroutines.cancellation.CancellationException
 
 fun isOnline(context: Context): Boolean {
     val connectivityManager =
@@ -22,4 +23,18 @@ fun isOnline(context: Context): Boolean {
         }
     }
     return false
+}
+
+inline fun <T> tryOrNull(
+    block: () -> T,
+): T? {
+    return try {
+        block()
+
+    } catch (e: CancellationException) {
+        throw e
+
+    } catch (e: Exception) {
+        null
+    }
 }

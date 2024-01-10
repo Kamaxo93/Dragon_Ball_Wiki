@@ -1,16 +1,13 @@
 package com.example.dragonballwiki
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -37,6 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    dragonListViewModel.dataState()
                     val navigationController = rememberNavController()
                     NavHost(
                         navController = navigationController,
@@ -45,19 +43,16 @@ class MainActivity : ComponentActivity() {
                         composable(route = Routes.DragonList.route) {
                             DragonListScreen(dragonListViewModel = dragonListViewModel,
                                 onClickElement = {
-                                    navigationController.navigate("Character_Detail/$it") {
+                                    characterDetailViewModel.getCharacterDetail(it)
+                                    navigationController.navigate(Routes.CharactersDetail.route) {
                                         launchSingleTop = true
                                     }
                                 }, onClickErrorList = {
                                     dragonListViewModel.reloadList()
                                 })
                         }
-
-                        composable(route = Routes.CharactersDetail.route) { backStackEntry ->
-                            CharacterDetailScreen(
-                                characterDetailViewModel,
-                                id = backStackEntry.arguments?.getString("id").orEmpty()
-                            )
+                        composable(route = Routes.CharactersDetail.route) {
+                            CharacterDetailScreen(characterDetailViewModel)
                         }
                     }
                 }

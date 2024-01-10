@@ -22,19 +22,17 @@ class DataSourceModule {
     @Provides
     @Singleton
     fun provideDragonListRemoteDataSource(
-        service: DragonListService,
-        @ApplicationContext context: Context
+        service: DragonListService
     ): DragonListRemoteDataSource {
-        return DragonListRemoteDataSourceImpl(service, context)
+        return DragonListRemoteDataSourceImpl(service)
     }
 
     @Provides
     @Singleton
     fun provideCharacterDetailRemoteDataSource(
         service: CharacterDetailService,
-        @ApplicationContext context: Context
     ): CharacterDetailDataSource {
-        return CharacterDetailDataSourceImpl(service, context)
+        return CharacterDetailDataSourceImpl(service)
     }
 
 }

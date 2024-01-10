@@ -1,7 +1,5 @@
 package com.example.dragonballwiki.core
 
-import android.util.Log
-import coil.request.ErrorResult
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +8,6 @@ import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.logging.Logger
 import kotlin.coroutines.cancellation.CancellationException
 
 object RepositoryErrorManager {
@@ -44,7 +41,7 @@ object RepositoryErrorManager {
     }
 
     private fun ResponseBody.getErrorMessage(): String? =
-        tryOrNull(logException = false) {
+        tryOrNull {
             Gson().fromJson(charStream(), GenericErrorDto::class.java).message
         }
 

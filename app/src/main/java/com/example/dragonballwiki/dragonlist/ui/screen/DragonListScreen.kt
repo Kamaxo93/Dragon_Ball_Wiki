@@ -1,6 +1,5 @@
 package com.example.dragonballwiki.dragonlist.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +22,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,8 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
@@ -55,7 +51,7 @@ fun DragonListScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val uiState by produceState<CharacterUiState>(
-        initialValue = CharacterUiState.Loading,
+        initialValue = CharacterUiState.Start,
         key1 = lifecycle,
         key2 = dragonListViewModel
     ) {
@@ -63,7 +59,6 @@ fun DragonListScreen(
             dragonListViewModel.uiState.collect { value = it }
         }
     }
-    dragonListViewModel.dataState()
 
     when (uiState) {
         is CharacterUiState.Error -> {
@@ -106,8 +101,8 @@ fun DragonListScreen(
             }
         }
 
-        is CharacterUiState.ErrorGeneric -> {
-            Log.i("manolete", "DragonListScreen: ${(uiState as CharacterUiState.ErrorGeneric)}")
+        is CharacterUiState.Start -> {
+            //no-op
         }
     }
 }
@@ -128,7 +123,7 @@ fun ItemCharacter(character: CharacterVO, onClickElement: (String) -> Unit) {
     Card(
         Modifier
             .padding(16.dp)
-            .clickable { onClickElement(character.name) }) {
+            .clickable { onClickElement(character.id.toString()) }) {
         ImageCharacter(
             urlImage = character.image,
             modifier = Modifier

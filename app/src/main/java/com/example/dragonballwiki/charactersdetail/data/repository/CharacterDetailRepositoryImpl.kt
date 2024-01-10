@@ -3,32 +3,15 @@ package com.example.dragonballwiki.charactersdetail.data.repository
 import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSource
 import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDetailRepository
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
-import com.example.dragonballwiki.charactersdetail.ui.model.OriginPlanet
+import com.example.dragonballwiki.core.AsyncResult
+import com.example.dragonballwiki.core.RepositoryErrorManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class CharacterDetailRepositoryImpl(private val remoteDataSource: CharacterDetailDataSource) :
     CharacterDetailRepository {
 
-    override fun getCharacterDetail(id: String): Flow<CharacterDetailVO> = flow {
-        emit(remoteDataSource.getCharacterDetail(id) ?: CharacterDetailVO(
-            affiliation = "",
-            description = "",
-            gender = "",
-            id = 0,
-            image = "",
-            ki = "",
-            maxKi = "",
-            name = "",
-            originPlanet = OriginPlanet(
-                description = "",
-                id = 0,
-                image = "",
-                isDestroyed = false,
-                name = ""
-            ),
-            race = "",
-            transformations = listOf()
-        ))
-    }
+    override suspend fun getCharacterDetail(id: String): Flow<AsyncResult<CharacterDetailVO>> =
+        RepositoryErrorManager.wrap {
+            remoteDataSource.getCharacterDetail(id)
+        }
 }

@@ -2,15 +2,17 @@ package com.example.dragonballwiki.dragonlist.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dragonballwiki.core.NetWorkError
-import com.example.dragonballwiki.core.Resource
+import com.example.dragonballwiki.core.AsyncError
+import com.example.dragonballwiki.core.AsyncResult
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
-import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
 import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +22,7 @@ class DragonListViewModel @Inject constructor(
     private val getCharacterListUseCase: GetCharacterListUseCase
 
 ) : ViewModel() {
-    private val _uiSate = MutableStateFlow<CharacterUiState>(CharacterUiState.Loading)
+    private val _uiSate = MutableStateFlow<CharacterUiState>(CharacterUiState.Start)
     val uiState = _uiSate.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(50000),
@@ -28,26 +30,30 @@ class DragonListViewModel @Inject constructor(
     )
 
     fun dataState() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             getCharacterListUseCase().collect {
                 _uiSate.value = when (it) {
-                    is Resource.Success -> Success(
-                        it.data ?: CharactersVO(
-                            characterList = listOf()
+                    is AsyncResult.Success -> {
+                        Success(
+                            it.data
                         )
-                    )
+                    }
 
-                    is Resource.Error -> {
-                        when (it) {
-                            is NetWorkError -> CharacterUiState.Error(it.message)
-                            else -> {
-                                CharacterUiState.Error(it.message)
-                            }
+                    is AsyncResult.Error -> {
+                        when (it.error) {
+                            AsyncError.ConnectionError -> CharacterUiState.Error("error en la conexíon")
+                            is AsyncError.CustomError -> CharacterUiState.Error("error en la conexíon")
+                            AsyncError.DataParseError -> CharacterUiState.Error("error en la conexíon")
+                            AsyncError.EmptyResponseError -> CharacterUiState.Error("error en la conexíon")
+                            is AsyncError.ServerError -> CharacterUiState.Error("error en la conexíon")
+                            AsyncError.TimeoutError -> CharacterUiState.Error("error en la conexíon")
+                            is AsyncError.UnknownError -> CharacterUiState.Error("error en la conexíon")
                         }
                     }
 
-                    is Resource.ErrorsResponse ->
-                        CharacterUiState.Error(it.errorResponse?.message)
+                    is AsyncResult.Loading -> {
+                        CharacterUiState.Loading
+                    }
                 }
             }
 

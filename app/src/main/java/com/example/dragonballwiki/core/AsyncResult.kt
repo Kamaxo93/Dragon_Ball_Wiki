@@ -1,15 +1,15 @@
 package com.example.dragonballwiki.core
 
-import ErrorType
-
-sealed class AsyncResult<T>(val data: T?, val debugMessage: String?) {
-    class Loading<T>(data: T? = null) : AsyncResult<T>(data, null)
-    class Success<T>(data: T?) : AsyncResult<T>(data, null)
-    class Error<T>(val error: ErrorType, data: T? = null) : AsyncResult<T>(data, error.errorMessage)
+sealed class AsyncResult<T> {
+    class Loading<T> : AsyncResult<T>()
+    class Success<T>(val data: T) : AsyncResult<T>()
+    class Error<T>(val error: AsyncError) : AsyncResult<T>()
 }
 
-fun <T, R> AsyncResult<T>.map(transform: (T) -> R): AsyncResult<R> = when (this) {
-    is AsyncResult.Error -> AsyncResult.Error(error, this.data?.let { transform(it) })
-    is AsyncResult.Success -> AsyncResult.Success(this.data?.let { transform(it) })
-    is AsyncResult.Loading -> AsyncResult.Loading(this.data?.let { transform(it) })
+inline fun <T, R> AsyncResult<T>.map(transform: (T) -> R): AsyncResult<R> {
+    return when (this) {
+        is AsyncResult.Loading -> AsyncResult.Loading()
+        is AsyncResult.Success -> AsyncResult.Success(transform(this.data))
+        is AsyncResult.Error -> AsyncResult.Error(this.error)
+    }
 }
