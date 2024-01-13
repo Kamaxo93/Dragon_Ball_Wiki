@@ -1,11 +1,13 @@
 package com.example.dragonballwiki.charactersdetail.ui.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCase
 import com.example.dragonballwiki.charactersdetail.ui.uistate.CharacterDetailUiState
 import com.example.dragonballwiki.core.AsyncError
 import com.example.dragonballwiki.core.AsyncResult
+import com.example.dragonballwiki.core.CHARACTER_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CharacterDetailViewModel @Inject constructor(
-    private val getCharacterDetailUseCase: GetCharacterDetailUseCase
+    private val getCharacterDetailUseCase: GetCharacterDetailUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
 
@@ -25,6 +28,11 @@ class CharacterDetailViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(50000),
         CharacterDetailUiState.Start
     )
+    val id = savedStateHandle.get<String>(CHARACTER_ID)
+
+    init {
+        getCharacterDetail(id.orEmpty())
+    }
     fun getCharacterDetail(id: String) {
         viewModelScope.launch {
             getCharacterDetailUseCase(id).collect {

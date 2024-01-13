@@ -17,19 +17,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
@@ -37,35 +33,30 @@ import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharact
 import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
-import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
+import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
+import okhttp3.internal.notify
 
 @Composable
 fun DragonListScreen(
-    dragonListViewModel: DragonListViewModel,
-    onClickElement: (String) -> Unit,
-    onClickErrorList: () -> Unit
+    dragonListViewModel: DragonListViewModel = hiltViewModel(),
+    onClickElement: (String) -> Unit
 ) {
+    val state = dragonListViewModel.state
 
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-    val uiState by produceState<CharacterUiState>(
-        initialValue = CharacterUiState.Start,
-        key1 = lifecycle,
-        key2 = dragonListViewModel
-    ) {
-        lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-            dragonListViewModel.uiState.collect { value = it }
-        }
-    }
-
-    when (uiState) {
-        is CharacterUiState.Error -> {
+    when  {
+        state.error.isNotEmpty() -> {
             Box(modifier = Modifier
                 .fillMaxSize()
-                .clickable { onClickErrorList() }) {
+                .clickable { dragonListViewModel.reloadList() }) {
                 Text(
                     text = "La lista está vacia",
                     fontWeight = FontWeight.ExtraBold,
@@ -78,18 +69,18 @@ fun DragonListScreen(
             }
         }
 
-        is CharacterUiState.Loading -> {
+        state.loading -> {
             LoginBall()
         }
 
-        is CharacterUiState.Success -> {
+        state.dragonListState?.characterList?.isNotEmpty() == true -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0xff272B33)),
             ) {
                 DragonBallList(
-                    characters = (uiState as CharacterUiState.Success).charactersVO,
+                    characters = state.dragonListState,
                     onClickElement = {
                         onClickElement(
                             it
@@ -97,17 +88,13 @@ fun DragonListScreen(
                     })
             }
         }
-
-        is CharacterUiState.Start -> {
-            //no-op
-        }
     }
 }
 
 @Composable
-fun DragonBallList(characters: CharactersVO, onClickElement: (String) -> Unit) {
+fun DragonBallList(characters: CharactersVO?, onClickElement: (String) -> Unit) {
     LazyColumn {
-        items(characters.characterList, key = { it.id }) {
+        items(characters?.characterList.orEmpty(), key = { it.id }) {
             ItemCharacter(character = it) {
                 onClickElement(it)
             }

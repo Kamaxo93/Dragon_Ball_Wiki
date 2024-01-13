@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
@@ -45,7 +46,7 @@ import com.example.dragonballwiki.ui.theme.SuperiorBackgroundColor
 
 
 @Composable
-fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel) {
+fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = hiltViewModel()) {
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
