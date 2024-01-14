@@ -18,22 +18,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
 import com.example.dragonballwiki.charactersdetail.ui.model.Transformation
-import com.example.dragonballwiki.charactersdetail.ui.uistate.CharacterDetailUiState
 import com.example.dragonballwiki.charactersdetail.ui.viewmodel.CharacterDetailViewModel
+import com.example.dragonballwiki.core.isTrue
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.KiTransformationCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
@@ -48,20 +43,10 @@ import com.example.dragonballwiki.ui.theme.SuperiorBackgroundColor
 @Composable
 fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = hiltViewModel()) {
 
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val state = characterDetailViewModel.state
 
-    val uiState by produceState<CharacterDetailUiState>(
-        initialValue = CharacterDetailUiState.Start,
-        key1 = lifecycle,
-        key2 = characterDetailViewModel
-    ) {
-        lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-            characterDetailViewModel.uiState.collect { value = it }
-        }
-    }
-
-    when (uiState) {
-        is CharacterDetailUiState.Error -> {
+    when  {
+        state.error?.isNotEmpty().isTrue() -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -79,22 +64,18 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
             }
         }
 
-        is CharacterDetailUiState.Loading -> {
+        state.loading -> {
             LoginBall()
         }
 
-        is CharacterDetailUiState.Success -> {
+        state.characterDetail != null -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0xff272B33)),
             ) {
-                CharacterDetail(characterDetailVO = (uiState as CharacterDetailUiState.Success).character)
+                CharacterDetail(characterDetailVO = state.characterDetail)
             }
-        }
-
-        is CharacterDetailUiState.Start -> {
-            //no-op
         }
     }
 }
@@ -176,7 +157,7 @@ fun ItemTransformation(item: Transformation) {
     Card(Modifier.padding(12.dp)) {
         Column(
             Modifier
-                .size(200.dp)
+                .size(220.dp)
                 .background(SuperiorBackgroundColor)
                 .padding(4.dp)
         ) {

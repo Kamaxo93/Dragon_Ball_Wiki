@@ -1,6 +1,5 @@
 package com.example.dragonballwiki.core.di
 
-import android.content.Context
 import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSource
 import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSourceImpl
 import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
@@ -10,7 +9,6 @@ import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListServi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 

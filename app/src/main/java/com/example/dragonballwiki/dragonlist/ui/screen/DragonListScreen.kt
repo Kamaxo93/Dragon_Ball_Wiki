@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dragonballwiki.R
+import com.example.dragonballwiki.core.isTrue
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharacter
@@ -36,14 +37,6 @@ import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
-import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
-import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
-import okhttp3.internal.notify
 
 @Composable
 fun DragonListScreen(
@@ -53,7 +46,7 @@ fun DragonListScreen(
     val state = dragonListViewModel.state
 
     when  {
-        state.error.isNotEmpty() -> {
+        state.error?.isNotEmpty().isTrue() -> {
             Box(modifier = Modifier
                 .fillMaxSize()
                 .clickable { dragonListViewModel.reloadList() }) {
@@ -73,7 +66,7 @@ fun DragonListScreen(
             LoginBall()
         }
 
-        state.dragonListState?.characterList?.isNotEmpty() == true -> {
+        state.dragonListState?.characterList?.isNotEmpty().isTrue() -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

@@ -11,7 +11,6 @@ import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseC
 import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,10 +28,10 @@ class DragonListViewModel @Inject constructor(
 
     private fun dataState() {
         viewModelScope.launch {
-            getCharacterListUseCase().collectLatest {
+            getCharacterListUseCase().collect {
                 when (it) {
                     is AsyncResult.Success -> {
-                        state = state.copy(dragonListState = it.data, loading = false)
+                        state = state.copy(dragonListState = it.data, loading = false, error = null)
                     }
 
                     is AsyncResult.Error -> {
@@ -48,7 +47,7 @@ class DragonListViewModel @Inject constructor(
                     }
 
                     is AsyncResult.Loading -> {
-                        state = state.copy(error = "", dragonListState = CharactersVO(listOf()), loading = true)
+                        state = state.copy(error = null, dragonListState = CharactersVO(listOf()), loading = true)
                     }
                 }
             }

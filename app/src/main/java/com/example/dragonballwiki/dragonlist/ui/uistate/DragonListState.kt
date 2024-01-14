@@ -7,5 +7,5 @@ import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 data class DragonListState(
     val dragonListState: CharactersVO? = null,
     val loading: Boolean = false,
-    val error: String = ""
+    val error: String? = null
 )
