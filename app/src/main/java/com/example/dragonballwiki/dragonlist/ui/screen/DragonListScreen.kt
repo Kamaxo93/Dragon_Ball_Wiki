@@ -15,8 +15,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.core.isTrue
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
@@ -38,14 +46,17 @@ import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DragonListScreen(
     dragonListViewModel: DragonListViewModel = hiltViewModel(),
     onClickElement: (String) -> Unit
 ) {
     val state = dragonListViewModel.state
-
-    when  {
+    var searchCharacter by rememberSaveable {
+        mutableStateOf("")
+    }
+    when {
         state.error?.isNotEmpty().isTrue() -> {
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -66,28 +77,47 @@ fun DragonListScreen(
             LoginBall()
         }
 
-        state.dragonListState?.characterList?.isNotEmpty().isTrue() -> {
-            Box(
+        state.dragonListState != null -> {
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0xff272B33)),
             ) {
-                DragonBallList(
-                    characters = state.dragonListState,
-                    onClickElement = {
-                        onClickElement(
-                            it
-                        )
-                    })
+                SearchBar(
+                    query = searchCharacter,
+                    placeholder = {
+                                  Text(text = "Buscar personaje")
+                    },
+                    onQueryChange = {
+                        searchCharacter = it
+                        dragonListViewModel.searchCharacter(nameCharacter = it)
+                    },
+                    onSearch = {
+                        dragonListViewModel.searchCharacter(nameCharacter = it)
+                    },
+                    active = true,
+                    onActiveChange = {
+
+                    },
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                ) {
+                    DragonBallList(
+                        characters = state.dragonListState,
+                        onClickElement = {
+                            onClickElement(
+                                it
+                            )
+                        })
+                }
             }
         }
     }
 }
 
 @Composable
-fun DragonBallList(characters: CharactersVO?, onClickElement: (String) -> Unit) {
+fun DragonBallList(characters: List<CharacterVO>?, onClickElement: (String) -> Unit) {
     LazyColumn {
-        items(characters?.characterList.orEmpty(), key = { it.id }) {
+        items(characters ?: listOf(), key = { it.id }) {
             ItemCharacter(character = it) {
                 onClickElement(it)
             }

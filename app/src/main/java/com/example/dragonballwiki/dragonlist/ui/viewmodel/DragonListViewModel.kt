@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.dragonballwiki.core.AsyncError
 import com.example.dragonballwiki.core.AsyncResult
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
-import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
+import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -22,6 +22,8 @@ class DragonListViewModel @Inject constructor(
     var state by mutableStateOf(DragonListState())
         private set
 
+    private var characterList = listOf<CharacterVO>()
+
     init {
         dataState()
     }
@@ -31,7 +33,12 @@ class DragonListViewModel @Inject constructor(
             getCharacterListUseCase().collect {
                 when (it) {
                     is AsyncResult.Success -> {
-                        state = state.copy(dragonListState = it.data, loading = false, error = null)
+                        characterList = it.data.characterList.toMutableList()
+                        state = state.copy(
+                            dragonListState = characterList,
+                            loading = false,
+                            error = null
+                        )
                     }
 
                     is AsyncResult.Error -> {
@@ -42,12 +49,16 @@ class DragonListViewModel @Inject constructor(
                             AsyncError.EmptyResponseError,
                             is AsyncError.ServerError,
                             AsyncError.TimeoutError,
-                            is AsyncError.UnknownError -> state = state.copy(error ="error en la conexíon", dragonListState = CharactersVO(listOf()), loading = false)
+                            is AsyncError.UnknownError -> state = state.copy(
+                                error = "error en la conexíon",
+                                dragonListState = listOf(),
+                                loading = false
+                            )
                         }
                     }
 
                     is AsyncResult.Loading -> {
-                        state = state.copy(error = null, dragonListState = CharactersVO(listOf()), loading = true)
+                        state = state.copy(error = null, dragonListState = listOf(), loading = true)
                     }
                 }
             }
@@ -57,5 +68,19 @@ class DragonListViewModel @Inject constructor(
 
     fun reloadList() {
         dataState()
+    }
+
+    fun searchCharacter(nameCharacter: String) {
+        state = state.copy(dragonListState =
+        if (nameCharacter.isNotBlank()) {
+            characterList.filter {
+                it.name.contains(
+                    nameCharacter,
+                    true
+                )
+            }
+        } else {
+            characterList
+        }, loading = false, error = null)
     }
 }
