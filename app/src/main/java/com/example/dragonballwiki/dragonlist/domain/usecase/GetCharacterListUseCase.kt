@@ -11,7 +11,7 @@ interface GetCharacterListUseCase {
 
 class GetCharacterListUseCaseImpl(private val repository: DragonListRepository): GetCharacterListUseCase {
     override suspend fun invoke(): Flow<AsyncResult<CharactersVO>> {
-        return repository.getCharacterListRemote()
+        return repository.getCharacterList()
     }
 
 }

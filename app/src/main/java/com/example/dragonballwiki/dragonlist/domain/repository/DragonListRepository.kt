@@ -5,5 +5,5 @@ import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import kotlinx.coroutines.flow.Flow
 
 interface DragonListRepository {
-    suspend fun getCharacterListRemote(): Flow<AsyncResult<CharactersVO>>
+    suspend fun getCharacterList(): Flow<AsyncResult<CharactersVO>>
 }
