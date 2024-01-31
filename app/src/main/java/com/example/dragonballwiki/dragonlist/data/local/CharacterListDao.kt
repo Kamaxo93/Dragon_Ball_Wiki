@@ -12,5 +12,5 @@ interface CharacterListDao {
     fun getCharacterList(): List<CharacterEntity>
 
     @Insert
-    suspend fun addCharacter(item: CharacterEntity)
+    suspend fun addCharacter(items: List<CharacterEntity>)
 }

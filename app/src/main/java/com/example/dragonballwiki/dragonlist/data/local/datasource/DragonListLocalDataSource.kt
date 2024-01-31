@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface DragonListLocalDataSource {
     fun getCharactersList(): List<CharacterEntity>
 
-    suspend fun addCharacters(characterEntity: CharacterEntity)
+    suspend fun addCharacters(characterEntity: List<CharacterEntity>)
 }
 
 class DragonListLocalDataSourceImpl(private val dao: CharacterListDao) : DragonListLocalDataSource {
@@ -15,7 +15,7 @@ class DragonListLocalDataSourceImpl(private val dao: CharacterListDao) : DragonL
         return dao.getCharacterList()
     }
 
-    override suspend fun addCharacters(characterEntity: CharacterEntity) {
+    override suspend fun addCharacters(characterEntity: List<CharacterEntity>) {
         dao.addCharacter(characterEntity)
     }
 
