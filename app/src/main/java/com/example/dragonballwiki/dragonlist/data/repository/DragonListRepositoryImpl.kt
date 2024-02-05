@@ -15,46 +15,36 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 class DragonListRepositoryImpl(
     private val remoteDataSource: DragonListRemoteDataSource,
     private val localDataSource: DragonListLocalDataSource
 ) :
     DragonListRepository {
-    override suspend fun getCharacterList(): Flow<AsyncResult<CharactersVO>> {
+    override suspend fun getCharacterList(): Flow<CharactersVO> {
         return flow {
-            val localCharacterList = withContext(Dispatchers.IO) { localDataSource.getCharactersList() }
-            if (localCharacterList.isNotEmpty()) {
-                 emit(AsyncResult.Success(CharactersVO(localCharacterList.toVO())))
+            emit(CharactersVO(localDataSource.getCharactersList().toVO()))
+        }
+    }
 
-            } else {
-                val response = getCharacterListRemote()
-                response.collect {
-                    when (it) {
-                        is AsyncResult.Error -> {
-                            emit(AsyncResult.Error(AsyncError.ConnectionError))
-                        }
+    override suspend fun addCharactersLocalDataBase() {
+        getCharacterListRemote().collect {
+            when (it) {
+                is AsyncResult.Success -> {
+                    localDataSource.addCharacters(it.data.characterList.toEntity())
+                }
 
-                        is AsyncResult.Loading -> {
-                            emit(AsyncResult.Loading())
-                        }
+                is AsyncResult.Error -> {
+                }
 
-                        is AsyncResult.Success -> {
-                            localDataSource.addCharacters(it.data.characterList.toEntity())
-                            emit(withContext(Dispatchers.IO) {
-                                    AsyncResult.Success(
-                                        CharactersVO(
-                                            localDataSource.getCharactersList().toVO()
-                                        )
-                                    )
-                            }
-                            )
-                        }
-                    }
+                is AsyncResult.Loading -> {
                 }
             }
         }

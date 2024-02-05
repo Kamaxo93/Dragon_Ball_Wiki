@@ -7,18 +7,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dragonballwiki.core.AsyncError
 import com.example.dragonballwiki.core.AsyncResult
+import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DragonListViewModel @Inject constructor(
-    private val getCharacterListUseCase: GetCharacterListUseCase
+    private val getCharacterListUseCase: GetCharacterListUseCase,
+    private val addCharactersLocalDataBaseUseCase: AddCharactersLocalDataBaseUseCase
 ) : ViewModel() {
-
     var state by mutableStateOf(DragonListState())
         private set
 
@@ -29,40 +32,31 @@ class DragonListViewModel @Inject constructor(
     }
 
     private fun dataState() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main) {
+            state = state.copy(error = null, dragonListState = null, loading = true)
+            }
             getCharacterListUseCase().collect {
-                when (it) {
-                    is AsyncResult.Success -> {
-                        characterList = it.data.characterList.toMutableList()
+                try {
+                    if (it.characterList.isEmpty()) {
+                        addCharactersLocalDataBaseUseCase()
+
+                    } else {
+                        characterList = it.characterList
                         state = state.copy(
                             dragonListState = characterList,
                             loading = false,
                             error = null
                         )
                     }
-
-                    is AsyncResult.Error -> {
-                        when (it.error) {
-                            AsyncError.ConnectionError,
-                            is AsyncError.CustomError,
-                            AsyncError.DataParseError,
-                            AsyncError.EmptyResponseError,
-                            is AsyncError.ServerError,
-                            AsyncError.TimeoutError,
-                            is AsyncError.UnknownError -> state = state.copy(
-                                error = "error en la conexíon",
-                                dragonListState = listOf(),
-                                loading = false
-                            )
-                        }
-                    }
-
-                    is AsyncResult.Loading -> {
-                        state = state.copy(error = null, dragonListState = listOf(), loading = true)
-                    }
+                } catch (e: Exception) {
+                    state = state.copy(
+                        error = "error en la conexíon",
+                        dragonListState = null,
+                        loading = false
+                    )
                 }
             }
-
         }
     }
 
@@ -82,5 +76,14 @@ class DragonListViewModel @Inject constructor(
         } else {
             characterList
         }, loading = false, error = null)
+    }
+
+    fun add() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (characterList.isEmpty()) {
+                addCharactersLocalDataBaseUseCase()
+                dataState()
+            }
+        }
     }
 }

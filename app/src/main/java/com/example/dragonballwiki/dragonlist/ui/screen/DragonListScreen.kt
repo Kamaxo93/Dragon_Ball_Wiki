@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +45,7 @@ import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,11 +58,14 @@ fun DragonListScreen(
     var searchCharacter by rememberSaveable {
         mutableStateOf("")
     }
+    var isSearchCharacters by rememberSaveable {
+        mutableStateOf(false)
+    }
     when {
         state.error?.isNotEmpty().isTrue() -> {
             Box(modifier = Modifier
                 .fillMaxSize()
-                .clickable { dragonListViewModel.reloadList() }) {
+                .clickable { dragonListViewModel.add() }) {
                 Text(
                     text = "La lista está vacia",
                     fontWeight = FontWeight.ExtraBold,
@@ -91,9 +96,11 @@ fun DragonListScreen(
                     onQueryChange = {
                         searchCharacter = it
                         dragonListViewModel.searchCharacter(nameCharacter = it)
+                        isSearchCharacters = true
                     },
                     onSearch = {
                         dragonListViewModel.searchCharacter(nameCharacter = it)
+                        isSearchCharacters = true
                     },
                     active = true,
                     onActiveChange = {
@@ -103,10 +110,12 @@ fun DragonListScreen(
                 ) {
                     DragonBallList(
                         characters = state.dragonListState,
+                        isSearchCharacters = isSearchCharacters,
                         onClickElement = {
                             onClickElement(
                                 it
                             )
+                            isSearchCharacters = false
                         })
                 }
             }
@@ -115,12 +124,14 @@ fun DragonListScreen(
 }
 
 @Composable
-fun DragonBallList(characters: List<CharacterVO>?, onClickElement: (String) -> Unit) {
+fun DragonBallList(characters: List<CharacterVO>?, isSearchCharacters: Boolean, onClickElement: (String) -> Unit) {
     val state = rememberLazyListState(0)
     val coroutineScope = rememberCoroutineScope()
     LazyColumn(state = state) {
-        coroutineScope.launch {
-            state.scrollToItem(0)
+        if (isSearchCharacters) {
+            coroutineScope.launch {
+                state.scrollToItem(0)
+            }
         }
         items(characters ?: listOf(), key = { it.id }) {
             ItemCharacter(character = it) {
@@ -202,27 +213,4 @@ fun LoginBall() {
 @Composable
 fun PreviewRecycler() {
     LoginBall()
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.Magenta),
-//    ) {
-//        DragonBallList(
-//            CharactersVO(
-//                listOf(
-//                    CharacterVO(
-//                        affiliation = "Sultan",
-//                        description = "Genise",
-//                        gender = "Rasheeda",
-//                        id = 7065,
-//                        image = "https://res.cloudinary.com/dgtgbyo76/image/upload/v1699139274/hcxz5pcptdevfud5mko0.webp",
-//                        ki = "Ernst",
-//                        maxKi = "Shana",
-//                        name = "Krystie",
-//                        race = "Yusuf"
-//                    )
-//                )
-//            )
-//        ) {}
-//    }
 }

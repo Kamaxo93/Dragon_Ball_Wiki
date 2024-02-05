@@ -5,13 +5,12 @@ import com.example.dragonballwiki.dragonlist.domain.repository.DragonListReposit
 import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import kotlinx.coroutines.flow.Flow
 
-interface GetCharacterListUseCase {
-    suspend operator fun invoke(): Flow<CharactersVO>
+interface AddCharactersLocalDataBaseUseCase {
+    suspend operator fun invoke()
 }
 
-class GetCharacterListUseCaseImpl(private val repository: DragonListRepository): GetCharacterListUseCase {
-    override suspend fun invoke(): Flow<CharactersVO> {
-        return repository.getCharacterList()
+class AddCharactersLocalDataBaseUseCaseImpl(private val repository: DragonListRepository): AddCharactersLocalDataBaseUseCase {
+    override suspend fun invoke() {
+        repository.addCharactersLocalDataBase()
     }
-
 }

@@ -4,6 +4,8 @@ import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDe
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCase
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCaseImpl
 import com.example.dragonballwiki.dragonlist.domain.repository.DragonListRepository
+import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
+import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCaseImpl
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCaseImpl
 import dagger.Module
@@ -19,6 +21,11 @@ class UseCaseModule {
     @Provides
     fun provideGetCharacterListUseCase(repository: DragonListRepository): GetCharacterListUseCase {
         return GetCharacterListUseCaseImpl(repository)
+    }
+
+    @Provides
+    fun provideAddCharactersLocalDataBaseUseCase(repository: DragonListRepository): AddCharactersLocalDataBaseUseCase {
+        return AddCharactersLocalDataBaseUseCaseImpl(repository)
     }
 
     @Provides
