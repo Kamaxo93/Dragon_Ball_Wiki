@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface DragonListRepository {
     suspend fun getCharacterList(): Flow<CharactersVO>
 
-    suspend fun addCharactersLocalDataBase()
+    suspend fun addCharactersLocalDataBase(): Flow<AsyncResult<Unit>>
 }

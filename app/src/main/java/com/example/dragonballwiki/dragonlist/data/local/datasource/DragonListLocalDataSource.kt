@@ -5,13 +5,13 @@ import com.example.dragonballwiki.dragonlist.data.local.model.CharacterEntity
 import kotlinx.coroutines.flow.Flow
 
 interface DragonListLocalDataSource {
-    fun getCharactersList(): List<CharacterEntity>
+    fun getCharactersList(): Flow<List<CharacterEntity>>
 
     suspend fun addCharacters(characterEntity: List<CharacterEntity>)
 }
 
 class DragonListLocalDataSourceImpl(private val dao: CharacterListDao) : DragonListLocalDataSource {
-    override fun getCharactersList(): List<CharacterEntity> {
+    override fun getCharactersList(): Flow<List<CharacterEntity>> {
         return dao.getCharacterList()
     }
 

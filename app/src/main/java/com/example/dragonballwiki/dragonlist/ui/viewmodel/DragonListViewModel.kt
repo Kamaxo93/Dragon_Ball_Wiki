@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dragonballwiki.core.AsyncError
 import com.example.dragonballwiki.core.AsyncResult
 import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
@@ -34,34 +33,29 @@ class DragonListViewModel @Inject constructor(
     private fun dataState() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-            state = state.copy(error = null, dragonListState = null, loading = true)
+                state = state.copy(error = null, dragonListState = null, loading = true)
             }
-            getCharacterListUseCase().collect {
-                try {
-                    if (it.characterList.isEmpty()) {
-                        addCharactersLocalDataBaseUseCase()
-
-                    } else {
-                        characterList = it.characterList
-                        state = state.copy(
-                            dragonListState = characterList,
-                            loading = false,
-                            error = null
-                        )
+            getCharacterListUseCase().collect { CharactersVO ->
+                if (CharactersVO.characterList.isEmpty()) {
+                    addCharactersLocalDataBaseUseCase().collect {
+                        when(it) {
+                            is AsyncResult.Error -> state = state.copy(error = "Error en el servicio", dragonListState = null, loading = false)
+                            is AsyncResult.Loading -> state = state.copy(error = null, dragonListState = null, loading = true)
+                            is AsyncResult.Success -> {
+                            }
+                        }
                     }
-                } catch (e: Exception) {
+
+                } else {
+                    characterList = CharactersVO.characterList
                     state = state.copy(
-                        error = "error en la conexíon",
-                        dragonListState = null,
-                        loading = false
+                        dragonListState = characterList,
+                        loading = false,
+                        error = null
                     )
                 }
             }
         }
-    }
-
-    fun reloadList() {
-        dataState()
     }
 
     fun searchCharacter(nameCharacter: String) {
@@ -81,8 +75,15 @@ class DragonListViewModel @Inject constructor(
     fun add() {
         viewModelScope.launch(Dispatchers.IO) {
             if (characterList.isEmpty()) {
-                addCharactersLocalDataBaseUseCase()
-                dataState()
+                addCharactersLocalDataBaseUseCase().collect {
+                    when(it) {
+                        is AsyncResult.Error -> state = state.copy(error = "Error en el servicio", dragonListState = null, loading = false)
+                        is AsyncResult.Loading -> state = state.copy(error = null, dragonListState = null, loading = true)
+                        is AsyncResult.Success -> {
+                            dataState()
+                        }
+                    }
+                }
             }
         }
     }
