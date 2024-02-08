@@ -1,14 +1,13 @@
 package com.example.dragonballwiki.dragonlist.data.repository
 
-import com.example.dragonballwiki.core.AsyncError
 import com.example.dragonballwiki.core.AsyncResult
 import com.example.dragonballwiki.core.RepositoryErrorManager
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
 import com.example.dragonballwiki.dragonlist.data.local.model.CharacterEntity
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSource
+import com.example.dragonballwiki.dragonlist.domain.model.CharacterBO
 import com.example.dragonballwiki.dragonlist.domain.repository.DragonListRepository
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
-import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -18,7 +17,7 @@ class DragonListRepositoryImpl(
     private val localDataSource: DragonListLocalDataSource
 ) :
     DragonListRepository {
-    override suspend fun getCharacterList(): Flow<CharactersVO> {
+    override suspend fun getCharacterList(): Flow<List<CharacterBO>> {
         return localDataSource.getCharactersList().map {
             CharactersVO(it.toVO())
         }
