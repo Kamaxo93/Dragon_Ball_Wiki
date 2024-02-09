@@ -9,6 +9,7 @@ import com.example.dragonballwiki.core.AsyncResult
 import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
+import com.example.dragonballwiki.dragonlist.ui.model.toVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,19 +36,18 @@ class DragonListViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 state = state.copy(error = null, dragonListState = null, loading = true)
             }
-            getCharacterListUseCase().collect { CharactersVO ->
-                if (CharactersVO.characterList.isEmpty()) {
+            getCharacterListUseCase().collect { Characters ->
+                if (Characters.isEmpty()) {
                     addCharactersLocalDataBaseUseCase().collect {
                         when(it) {
                             is AsyncResult.Error -> state = state.copy(error = "Error en el servicio", dragonListState = null, loading = false)
                             is AsyncResult.Loading -> state = state.copy(error = null, dragonListState = null, loading = true)
-                            is AsyncResult.Success -> {
-                            }
+                            is AsyncResult.Success -> {}
                         }
                     }
 
                 } else {
-                    characterList = CharactersVO.characterList
+                    characterList = Characters.toVO()
                     state = state.copy(
                         dragonListState = characterList,
                         loading = false,
