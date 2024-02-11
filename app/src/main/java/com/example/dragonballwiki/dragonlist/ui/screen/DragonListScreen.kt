@@ -1,5 +1,7 @@
 package com.example.dragonballwiki.dragonlist.ui.screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,10 +27,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,25 +38,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dragonballwiki.R
-import com.example.dragonballwiki.core.isTrue
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
+import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DragonListScreen(
     dragonListViewModel: DragonListViewModel = hiltViewModel(),
     onClickElement: (String) -> Unit
 ) {
     val state = dragonListViewModel.state
+    val context: Context = LocalContext.current
     var searchCharacter by rememberSaveable {
         mutableStateOf("")
     }
@@ -62,20 +63,9 @@ fun DragonListScreen(
         mutableStateOf(false)
     }
     when {
-        state.error?.isNotEmpty().isTrue() -> {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .clickable { dragonListViewModel.add() }) {
-                Text(
-                    text = "La lista está vacia",
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 32.sp,
-                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.Center)
-                )
-            }
+        state.error != null -> {
+            CharactersContainerError(dragonListViewModel, context)
+            Toast.makeText(context, context.getText(state.error), Toast.LENGTH_SHORT).show()
         }
 
         state.loading -> {
@@ -83,48 +73,92 @@ fun DragonListScreen(
         }
 
         state.dragonListState != null -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xff272B33)),
-            ) {
-                SearchBar(
-                    query = searchCharacter,
-                    placeholder = {
-                                  Text(text = "Buscar personaje")
-                    },
-                    onQueryChange = {
-                        searchCharacter = it
-                        dragonListViewModel.searchCharacter(nameCharacter = it)
-                        isSearchCharacters = true
-                    },
-                    onSearch = {
-                        dragonListViewModel.searchCharacter(nameCharacter = it)
-                        isSearchCharacters = true
-                    },
-                    active = true,
-                    onActiveChange = {
-
-                    },
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                ) {
-                    DragonBallList(
-                        characters = state.dragonListState,
-                        isSearchCharacters = isSearchCharacters,
-                        onClickElement = {
-                            onClickElement(
-                                it
-                            )
-                            isSearchCharacters = false
-                        })
-                }
-            }
+            CharactersContainer(
+                searchCharacter,
+                dragonListViewModel,
+                isSearchCharacters,
+                state,
+                onClickElement
+            )
         }
     }
 }
 
 @Composable
-fun DragonBallList(characters: List<CharacterVO>?, isSearchCharacters: Boolean, onClickElement: (String) -> Unit) {
+private fun CharactersContainerError(
+    dragonListViewModel: DragonListViewModel,
+    context: Context
+) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .clickable { dragonListViewModel.reloadCharacterData() }) {
+        Text(
+            text = context.getString(R.string.character_list_empty),
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 32.sp,
+            color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+            modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun CharactersContainer(
+    searchCharacter: String,
+    dragonListViewModel: DragonListViewModel,
+    isSearchCharacters: Boolean,
+    state: DragonListState,
+    onClickElement: (String) -> Unit
+) {
+    var searchCharacter1 = searchCharacter
+    var isSearchCharacters1 = isSearchCharacters
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xff272B33)),
+    ) {
+        SearchBar(
+            query = searchCharacter1,
+            placeholder = {
+                Text(text = "Buscar personaje")
+            },
+            onQueryChange = {
+                searchCharacter1 = it
+                dragonListViewModel.searchCharacter(nameCharacter = it)
+                isSearchCharacters1 = true
+            },
+            onSearch = {
+                dragonListViewModel.searchCharacter(nameCharacter = it)
+                isSearchCharacters1 = true
+            },
+            active = true,
+            onActiveChange = {
+
+            },
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
+            DragonBallList(
+                characters = state.dragonListState,
+                isSearchCharacters = isSearchCharacters1,
+                onClickElement = {
+                    onClickElement(
+                        it
+                    )
+                    isSearchCharacters1 = false
+                })
+        }
+    }
+}
+
+@Composable
+fun DragonBallList(
+    characters: List<CharacterVO>?,
+    isSearchCharacters: Boolean,
+    onClickElement: (String) -> Unit
+) {
     val state = rememberLazyListState(0)
     val coroutineScope = rememberCoroutineScope()
     LazyColumn(state = state) {
@@ -201,7 +235,7 @@ fun LoginBall() {
         )
         Image(
             painter = painterResource(id = R.drawable.dragon_four_start),
-            contentDescription = "",
+            contentDescription = "imagen del personaje",
             Modifier
                 .align(Alignment.Center)
                 .size(280.dp)

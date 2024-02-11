@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dragonballwiki.R
 import com.example.dragonballwiki.core.AsyncResult
 import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
@@ -39,9 +40,16 @@ class DragonListViewModel @Inject constructor(
             getCharacterListUseCase().collect { Characters ->
                 if (Characters.isEmpty()) {
                     addCharactersLocalDataBaseUseCase().collect {
-                        when(it) {
-                            is AsyncResult.Error -> state = state.copy(error = "Error en el servicio", dragonListState = null, loading = false)
-                            is AsyncResult.Loading -> state = state.copy(error = null, dragonListState = null, loading = true)
+                        when (it) {
+                            is AsyncResult.Error -> state = state.copy(
+                                error = R.string.text_error_service,
+                                dragonListState = null,
+                                loading = false
+                            )
+
+                            is AsyncResult.Loading -> state =
+                                state.copy(error = null, dragonListState = null, loading = true)
+
                             is AsyncResult.Success -> {}
                         }
                     }
@@ -72,15 +80,23 @@ class DragonListViewModel @Inject constructor(
         }, loading = false, error = null)
     }
 
-    fun add() {
+    fun reloadCharacterData() {
         viewModelScope.launch(Dispatchers.IO) {
             if (characterList.isEmpty()) {
                 addCharactersLocalDataBaseUseCase().collect {
-                    when(it) {
-                        is AsyncResult.Error -> state = state.copy(error = "Error en el servicio", dragonListState = null, loading = false)
-                        is AsyncResult.Loading -> state = state.copy(error = null, dragonListState = null, loading = true)
+                    when (it) {
+                        is AsyncResult.Error -> state = state.copy(
+                            error = R.string.text_error_service,
+                            dragonListState = null,
+                            loading = false
+                        )
+
+                        is AsyncResult.Loading -> state =
+                            state.copy(error = null, dragonListState = null, loading = true)
+
                         is AsyncResult.Success -> {
-                            dataState()
+                            /** la lista al ser un flow, room la actualiza el state si observa algún cambio */
+                            //no-op
                         }
                     }
                 }

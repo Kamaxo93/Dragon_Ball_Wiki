@@ -53,7 +53,7 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
             )
             {
                 Text(
-                    text = "No exixten datos",
+                    text = "No existen datos del personaje",
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 32.sp,
                     color = if (isSystemInDarkTheme()) Color.White else Color.Black,
