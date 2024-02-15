@@ -1,6 +1,6 @@
 package com.example.dragonballwiki.core.di
 
-import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSource
+import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.repository.CharacterDetailRepositoryImpl
 import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDetailRepository
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
@@ -25,7 +25,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCharacterDetailRepository(remoteDatasource: CharacterDetailDataSource): CharacterDetailRepository {
+    fun provideCharacterDetailRepository(remoteDatasource: CharacterDetailRemoteDataSource): CharacterDetailRepository {
         return CharacterDetailRepositoryImpl(remoteDatasource)
     }
 }

@@ -1,17 +1,17 @@
-package com.example.dragonballwiki.charactersdetail.data.datasource
+package com.example.dragonballwiki.charactersdetail.data.remote.datasource
 
 import com.example.dragonballwiki.charactersdetail.data.remote.mapper.toVO
 import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
 
-interface CharacterDetailDataSource {
+interface CharacterDetailRemoteDataSource {
     suspend fun getCharacterDetail(id: String): CharacterDetailVO
 }
 
-class CharacterDetailDataSourceImpl(
+class CharacterDetailRemoteDataSourceImpl(
     private val service: CharacterDetailService
 ) :
-    CharacterDetailDataSource {
+    CharacterDetailRemoteDataSource {
     override suspend fun getCharacterDetail(id: String): CharacterDetailVO {
         return service.getCharacterDetail(id).toVO()
     }

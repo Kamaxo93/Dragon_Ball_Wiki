@@ -1,7 +1,7 @@
 package com.example.dragonballwiki.core.di
 
-import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSource
-import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSourceImpl
+import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
+import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSourceImpl
 import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
 import com.example.dragonballwiki.dragonlist.data.local.CharacterListDao
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
@@ -32,8 +32,8 @@ class DataSourceModule {
     @Singleton
     fun provideCharacterDetailRemoteDataSource(
         service: CharacterDetailService,
-    ): CharacterDetailDataSource {
-        return CharacterDetailDataSourceImpl(service)
+    ): CharacterDetailRemoteDataSource {
+        return CharacterDetailRemoteDataSourceImpl(service)
     }
 
     @Provides
