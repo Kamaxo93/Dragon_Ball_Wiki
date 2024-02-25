@@ -26,9 +26,9 @@ class DataBaseModule {
     }
 
     @Provides
-    fun provideDragonBallDataBase(@ApplicationContext appContext: Context, originPlanetConverter: OriginPlanetConverter): DragonBallDataBase {
+    fun provideDragonBallDataBase(@ApplicationContext appContext: Context): DragonBallDataBase {
         return Room.databaseBuilder(appContext, DragonBallDataBase::class.java, "DragonBallDataBase")
-            .addTypeConverter(originPlanetConverter)
+            .addTypeConverter(OriginPlanetConverter::class.java)
             .build()
     }
 }

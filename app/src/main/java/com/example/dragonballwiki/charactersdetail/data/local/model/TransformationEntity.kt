@@ -4,9 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity
-data class TransformationEntity(
-    @PrimaryKey
+data class TransformationEntity (
     val id: Int,
     val image: String,
     val ki: String,

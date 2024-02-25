@@ -5,14 +5,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.dragonballwiki.charactersdetail.data.local.CharacterDetailDao
 import com.example.dragonballwiki.charactersdetail.data.local.model.CharacterDetailEntity
-import com.example.dragonballwiki.charactersdetail.data.local.model.OriginPlanetEntity
-import com.example.dragonballwiki.charactersdetail.data.local.model.TransformationEntity
 import com.example.dragonballwiki.charactersdetail.data.local.model.converte.OriginPlanetConverter
 import com.example.dragonballwiki.dragonlist.data.local.CharacterListDao
 import com.example.dragonballwiki.dragonlist.data.local.model.CharacterEntity
 
 
-@Database(entities = [CharacterEntity::class, CharacterDetailEntity::class, TransformationEntity::class], version = 1)
+@Database(entities = [CharacterEntity::class, CharacterDetailEntity::class], version = 1)
 @TypeConverters(OriginPlanetConverter::class)
 abstract class DragonBallDataBase : RoomDatabase() {
     abstract fun CharacterListDao(): CharacterListDao
