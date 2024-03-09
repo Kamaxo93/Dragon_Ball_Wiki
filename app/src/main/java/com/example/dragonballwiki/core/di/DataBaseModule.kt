@@ -2,8 +2,6 @@ package com.example.dragonballwiki.core.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.dragonballwiki.charactersdetail.data.local.CharacterDetailDao
-import com.example.dragonballwiki.charactersdetail.data.local.model.converte.OriginPlanetConverter
 import com.example.dragonballwiki.core.database.DragonBallDataBase
 import com.example.dragonballwiki.dragonlist.data.local.CharacterListDao
 import dagger.Module
@@ -21,14 +19,8 @@ class DataBaseModule {
         return dragonBallDataBase.CharacterListDao()
     }
     @Provides
-    fun provideCharacterDetailDao(dragonBallDataBase: DragonBallDataBase): CharacterDetailDao {
-        return dragonBallDataBase.CharacterDetailDao()
-    }
-
-    @Provides
     fun provideDragonBallDataBase(@ApplicationContext appContext: Context): DragonBallDataBase {
         return Room.databaseBuilder(appContext, DragonBallDataBase::class.java, "DragonBallDataBase")
-            .addTypeConverter(OriginPlanetConverter::class.java)
             .build()
     }
 }
