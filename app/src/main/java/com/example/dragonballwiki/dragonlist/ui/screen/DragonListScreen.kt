@@ -36,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
@@ -48,10 +47,11 @@ import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DragonListScreen(
-    dragonListViewModel: DragonListViewModel = hiltViewModel(),
+    dragonListViewModel: DragonListViewModel = koinViewModel(),
     onClickElement: (String) -> Unit
 ) {
     val state = dragonListViewModel.state
