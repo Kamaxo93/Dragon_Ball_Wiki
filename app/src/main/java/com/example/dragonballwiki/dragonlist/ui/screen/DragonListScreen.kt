@@ -79,7 +79,9 @@ fun DragonListScreen(
                 isSearchCharacters,
                 state,
                 onClickElement
-            )
+            ) {
+                searchCharacter = it
+            }
         }
     }
 }
@@ -111,9 +113,9 @@ private fun CharactersContainer(
     dragonListViewModel: DragonListViewModel,
     isSearchCharacters: Boolean,
     state: DragonListState,
-    onClickElement: (String) -> Unit
+    onClickElement: (String) -> Unit,
+    searchCharacterChange: (String) -> Unit
 ) {
-    var searchCharacter1 = searchCharacter
     var isSearchCharacters1 = isSearchCharacters
     Column(
         modifier = Modifier
@@ -121,12 +123,12 @@ private fun CharactersContainer(
             .background(Color(0xff272B33)),
     ) {
         SearchBar(
-            query = searchCharacter1,
+            query = searchCharacter,
             placeholder = {
                 Text(text = "Buscar personaje")
             },
             onQueryChange = {
-                searchCharacter1 = it
+                searchCharacterChange(it)
                 dragonListViewModel.searchCharacter(nameCharacter = it)
                 isSearchCharacters1 = true
             },
