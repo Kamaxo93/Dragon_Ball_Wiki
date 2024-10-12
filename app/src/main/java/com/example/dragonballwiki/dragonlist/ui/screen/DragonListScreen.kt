@@ -56,6 +56,9 @@ fun DragonListScreen(
     var searchCharacter by rememberSaveable {
         mutableStateOf("")
     }
+
+    dragonListViewModel.initializeDataState()
+
     when {
         state.error?.isNotEmpty().isTrue() -> {
             Box(modifier = Modifier
@@ -196,28 +199,17 @@ fun LoginBall() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewRecycler() {
-    LoginBall()
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.Magenta),
-//    ) {
-//        DragonBallList(
-//            CharactersVO(
-//                listOf(
-//                    CharacterVO(
-//                        affiliation = "Sultan",
-//                        description = "Genise",
-//                        gender = "Rasheeda",
-//                        id = 7065,
-//                        image = "https://res.cloudinary.com/dgtgbyo76/image/upload/v1699139274/hcxz5pcptdevfud5mko0.webp",
-//                        ki = "Ernst",
-//                        maxKi = "Shana",
-//                        name = "Krystie",
-//                        race = "Yusuf"
-//                    )
-//                )
-//            )
-//        ) {}
-//    }
+    DragonBallList(listOf(
+        CharacterVO(
+            affiliation = "verterem",
+            description = "iaculis",
+            gender = "explicari",
+            id = 2022,
+            image = "liber",
+            ki = "delectus",
+            maxKi = "tation",
+            name = "Joni Crosby",
+            race = "dicit"
+
+        )), {})
 }
