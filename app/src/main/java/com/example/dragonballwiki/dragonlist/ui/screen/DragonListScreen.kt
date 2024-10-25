@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.core.isTrue
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
@@ -41,7 +39,6 @@ import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
-import com.example.dragonballwiki.dragonlist.ui.model.CharactersVO
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
