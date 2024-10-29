@@ -1,6 +1,7 @@
 package com.example.dragonballwiki.core.di
 
 import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
+import com.example.dragonballwiki.core.Constant.BASE_URL
 import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListService
 import dagger.Module
 import dagger.Provides
@@ -28,7 +29,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit {
-        return Retrofit.Builder().baseUrl("https://dragonball-api.com/api/")
+        return Retrofit.Builder().baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

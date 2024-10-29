@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dragonballwiki.R
-import com.example.dragonballwiki.core.AsyncResult
+import com.example.dragonballwiki.core.async.AsyncResult
 import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO

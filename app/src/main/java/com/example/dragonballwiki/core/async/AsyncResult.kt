@@ -1,4 +1,4 @@
-package com.example.dragonballwiki.core
+package com.example.dragonballwiki.core.async
 
 sealed class AsyncResult<T> {
     class Loading<T> : AsyncResult<T>()

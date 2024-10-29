@@ -1,14 +1,11 @@
 package com.example.dragonballwiki.dragonlist.ui.screen
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,9 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,8 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,8 +44,6 @@ import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
-import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
-import com.example.dragonballwiki.ui.theme.ProgressIndicatorLogin
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,21 +52,21 @@ fun DragonListScreen(
     onClickElement: (String) -> Unit
 ) {
     val state = dragonListViewModel.state
-    val context: Context = LocalContext.current
     var searchCharacter by rememberSaveable {
         mutableStateOf("")
     }
-    var isSearchCharacters by rememberSaveable {
+    val isSearchCharacters by rememberSaveable {
         mutableStateOf(false)
     }
     when {
         state.error != null -> {
-            CharactersContainerError(dragonListViewModel, context)
-            Toast.makeText(context, context.getText(state.error), Toast.LENGTH_SHORT).show()
+            CharactersContainerError {
+                dragonListViewModel.reloadCharacterData()
+            }
         }
 
         state.loading -> {
-            LoginBall()
+            LoginBall(stringResource(R.string.dragon_list_label_loading))
         }
 
         state.dragonListState != null -> {
@@ -88,21 +85,33 @@ fun DragonListScreen(
 
 @Composable
 private fun CharactersContainerError(
-    dragonListViewModel: DragonListViewModel,
-    context: Context
+    onReloadClicked: () -> Unit
 ) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .clickable { dragonListViewModel.reloadCharacterData() }) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Text(
-            text = context.getString(R.string.character_list_empty),
+            text = stringResource(R.string.character_list_empty),
             fontWeight = FontWeight.ExtraBold,
             fontSize = 32.sp,
-            color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+            color = MaterialTheme.colorScheme.error,
             modifier = Modifier
                 .padding(8.dp)
-                .align(Alignment.Center)
+                .align(Alignment.CenterHorizontally)
         )
+
+        Button(modifier = Modifier.padding(16.dp), onClick = {
+            onReloadClicked()
+        }) {
+            Text(
+                text = stringResource(R.string.dragon_list_label_error),
+                color = MaterialTheme.colorScheme.onError
+            )
+        }
     }
 }
 
@@ -125,7 +134,7 @@ private fun CharactersContainer(
         SearchBar(
             query = searchCharacter,
             placeholder = {
-                Text(text = "Buscar personaje")
+                Text(text = stringResource(R.string.search_character))
             },
             onQueryChange = {
                 searchCharacterChange(it)
@@ -137,10 +146,9 @@ private fun CharactersContainer(
                 isSearchCharacters1 = true
             },
             active = true,
-            onActiveChange = {
-
-            },
-            modifier = Modifier.padding(horizontal = 8.dp)
+            onActiveChange = {},
+            shadowElevation = 8.dp,
+            modifier = Modifier.background(Color(0xff272B33))
         ) {
             DragonBallList(
                 characters = state.dragonListState,
@@ -181,6 +189,7 @@ fun DragonBallList(
 fun ItemCharacter(character: CharacterVO, onClickElement: (String) -> Unit) {
     Card(
         Modifier
+            .background(Color(0xff272B33))
             .padding(16.dp)
             .clickable { onClickElement(character.id.toString()) }) {
         ImageCharacter(
@@ -193,54 +202,50 @@ fun ItemCharacter(character: CharacterVO, onClickElement: (String) -> Unit) {
         )
         InfoCharacter(
             character,
-            Modifier
-                .background(Color.Yellow)
+            Modifier.background(Color.Yellow)
         )
     }
 }
 
 @Composable
 fun InfoCharacter(character: CharacterVO, modifier: Modifier) {
-    Column(modifier.background(Color(0xFF3C3E44))) {
+    Column(modifier.fillMaxWidth().background(Color(0xEE3B4150))) {
         NameCharacter(character.name, modifier = Modifier.align(Alignment.CenterHorizontally))
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFF3C3E44))
-            ) {
-                TextBreedAndGenreCharacter(genre = character.gender, breed = character.race)
-                TextOtherData("Base KI", character.ki)
-                TextOtherData("Total KI", character.maxKi)
-                TextOtherData("Afiliación", character.affiliation)
-            }
-        }
+        TextBreedAndGenreCharacter(genre = character.gender, breed = character.race)
+        TextOtherData(stringResource(R.string.base_ki), character.ki)
+        TextOtherData(stringResource(R.string.maxi_ki), character.maxKi)
+        TextOtherData(stringResource(R.string.affiliation), character.affiliation)
     }
 }
 
 @Composable
-fun LoginBall() {
-    Box(
+fun LoginBall(message: String) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(InferiorBackgroundColor),
+            .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier
-                .size(150.dp)
-                .align(Alignment.Center),
-            color = ProgressIndicatorLogin
-        )
-        Image(
-            painter = painterResource(id = R.drawable.dragon_four_start),
-            contentDescription = "imagen del personaje",
-            Modifier
-                .align(Alignment.Center)
-                .size(280.dp)
+        Box {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.Center),
+            )
+            Image(
+                painter = painterResource(id = R.drawable.dragon_four_start),
+                contentDescription = stringResource(id = R.string.content_description_ball_loading),
+                Modifier
+                    .align(Alignment.Center)
+                    .size(280.dp)
+            )
+        }
+        Text(
+            text = message,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 26.sp,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
 }
@@ -248,5 +253,5 @@ fun LoginBall() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewRecycler() {
-    LoginBall()
+    CharactersContainerError() {}
 }

@@ -28,8 +28,8 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCharacterDetailRepository(remoteDataSource: CharacterDetailRemoteDataSource): CharacterDetailRepository {
-        return CharacterDetailRepositoryImpl(remoteDataSource)
+    fun provideCharacterDetailRepository(remoteDataSource: CharacterDetailRemoteDataSource, localDataSource: DragonListLocalDataSource): CharacterDetailRepository {
+        return CharacterDetailRepositoryImpl(remoteDataSource, localDataSource)
     }
 
 }

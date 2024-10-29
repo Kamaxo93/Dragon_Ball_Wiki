@@ -1,6 +1,6 @@
 package com.example.dragonballwiki.dragonlist.domain.usecase
 
-import com.example.dragonballwiki.core.AsyncResult
+import com.example.dragonballwiki.core.async.AsyncResult
 import com.example.dragonballwiki.dragonlist.domain.repository.DragonListRepository
 import kotlinx.coroutines.flow.Flow
 

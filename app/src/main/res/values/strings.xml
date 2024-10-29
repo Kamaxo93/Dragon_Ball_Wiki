@@ -2,4 +2,14 @@
     <string name="app_name">Dragon Ball Wiki</string>
     <string name="text_error_service">Error en el servicio</string>
     <string name="character_list_empty">"La lista está vacia"</string>
+    <string name="content_description_ball_loading">imagen del personaje</string>
+    <string name="dragon_list_label_loading">Obteniendo personajes…</string>
+    <string name="character_detail_label_loading">Obteniendo datos del personaje</string>
+    <string name="dragon_list_label_error">Reintentar</string>
+    <string name="base_ki">Base KI</string>
+    <string name="maxi_ki">Total KI</string>
+    <string name="affiliation">Afiliación</string>
+    <string name="search_character">Buscar personaje</string>
+    <string name="character_detail_label_transformations">Transformaciones</string>
+
 </resources>

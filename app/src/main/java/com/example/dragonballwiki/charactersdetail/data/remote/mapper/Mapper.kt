@@ -1,11 +1,10 @@
 package com.example.dragonballwiki.charactersdetail.data.remote.mapper
 
 import com.example.dragonballwiki.charactersdetail.data.remote.model.CharacterDetailResponse
-import com.example.dragonballwiki.charactersdetail.data.remote.model.OriginPlanetResponse
 import com.example.dragonballwiki.charactersdetail.data.remote.model.TransformationResponse
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
-import com.example.dragonballwiki.charactersdetail.ui.model.OriginPlanet
 import com.example.dragonballwiki.charactersdetail.ui.model.Transformation
+import com.example.dragonballwiki.dragonlist.data.local.model.CharacterEntity
 
 fun CharacterDetailResponse.toVO(): CharacterDetailVO =
     CharacterDetailVO(
@@ -17,7 +16,6 @@ fun CharacterDetailResponse.toVO(): CharacterDetailVO =
         ki = ki,
         maxKi = maxKi,
         name = name,
-        originPlanet = originPlanet.toVO(),
         race = race,
         transformations = transformations.toVO()
     )
@@ -29,7 +27,16 @@ private fun List<TransformationResponse>.toVO(): List<Transformation> =
         )
     }
 
-private fun OriginPlanetResponse.toVO(): OriginPlanet =
-    OriginPlanet(
-        description = description, id = id, image = image, isDestroyed = isDestroyed, name = name
+fun CharacterEntity.toVO(): CharacterDetailVO =
+    CharacterDetailVO(
+        affiliation = affiliation,
+        description = description,
+        gender = gender,
+        id = id,
+        image = image,
+        ki = ki,
+        maxKi = maxKi,
+        name = name,
+        race = race,
+        transformations = emptyList()
     )

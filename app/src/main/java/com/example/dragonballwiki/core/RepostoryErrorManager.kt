@@ -1,5 +1,7 @@
 package com.example.dragonballwiki.core
 
+import com.example.dragonballwiki.core.async.AsyncError
+import com.example.dragonballwiki.core.async.AsyncResult
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import kotlinx.coroutines.flow.Flow

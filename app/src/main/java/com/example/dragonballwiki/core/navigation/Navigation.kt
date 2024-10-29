@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.dragonballwiki.charactersdetail.ui.screen.CharacterDetailScreen
-import com.example.dragonballwiki.core.CHARACTER_ID
+import com.example.dragonballwiki.core.Constant.CHARACTER_ID
 import com.example.dragonballwiki.dragonlist.ui.screen.DragonListScreen
 
 @Composable

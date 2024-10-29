@@ -11,6 +11,9 @@ interface CharacterListDao {
     @Query("SELECT * from CharacterEntity")
     fun getCharacterList(): Flow<List<CharacterEntity>>
 
+    @Query("SELECT * from CharacterEntity WHERE id = :id")
+    fun getCharacter(id: String): Flow<CharacterEntity>
+
     @Insert
     suspend fun addCharacter(items: List<CharacterEntity>)
 }

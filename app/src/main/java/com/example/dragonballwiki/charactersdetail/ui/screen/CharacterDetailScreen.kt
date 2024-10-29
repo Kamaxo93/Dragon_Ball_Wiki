@@ -1,7 +1,6 @@
 package com.example.dragonballwiki.charactersdetail.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,15 +15,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.dragonballwiki.R
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
 import com.example.dragonballwiki.charactersdetail.ui.model.Transformation
 import com.example.dragonballwiki.charactersdetail.ui.viewmodel.CharacterDetailViewModel
@@ -35,9 +36,6 @@ import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.screen.LoginBall
-import com.example.dragonballwiki.ui.theme.ColumnBackgroundColor
-import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
-import com.example.dragonballwiki.ui.theme.SuperiorBackgroundColor
 
 
 @Composable
@@ -55,8 +53,7 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
                 Text(
                     text = "No existen datos del personaje",
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 32.sp,
-                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                    fontSize = 26.sp,
                     modifier = Modifier
                         .padding(8.dp)
                         .align(Alignment.Center)
@@ -65,14 +62,13 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
         }
 
         state.loading -> {
-            LoginBall()
+            LoginBall(stringResource(R.string.character_detail_label_loading))
         }
 
         state.characterDetail != null -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xff272B33)),
             ) {
                 CharacterDetail(characterDetailVO = state.characterDetail)
             }
@@ -83,67 +79,63 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
 @Composable
 fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
     Column(
-        Modifier
-            .fillMaxSize()
-            .background(color = ColumnBackgroundColor)
+        Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Card(Modifier.padding(8.dp)) {
-            Column(Modifier.fillMaxSize()) {
-                Row(
+        Column(Modifier.fillMaxSize()) {
+            Row(
+                Modifier
+                    .weight(0.4f)
+            ) {
+                ImageCharacter(
+                    characterDetailVO.image,
                     Modifier
-                        .background(SuperiorBackgroundColor)
-                        .weight(0.4f)
-                ) {
-                    ImageCharacter(
-                        characterDetailVO.image,
-                        Modifier
-                            .padding(8.dp)
-                            .fillMaxHeight()
-                            .fillMaxWidth(0.4f)
+                        .padding(8.dp)
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.4f)
+                )
+                Column(Modifier.fillMaxWidth()) {
+                    NameCharacter(
+                        nameCharacter = characterDetailVO.name,
+                        isDetail = true,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(vertical = 16.dp)
                     )
-                    Column(Modifier.fillMaxWidth()) {
-                        NameCharacter(
-                            nameCharacter = characterDetailVO.name,
-                            isDetail = true,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(vertical = 16.dp)
-                        )
-                        TextBreedAndGenreCharacter(
-                            genre = characterDetailVO.race,
-                            breed = characterDetailVO.gender,
-                            isDetail = true
-                        )
-                        Spacer(modifier = Modifier.size(16.dp))
-                        TextOtherData("Base KI", characterDetailVO.ki, isDetail = true)
-                        TextOtherData("Total KI", characterDetailVO.maxKi, isDetail = true)
-                        TextOtherData("Afiliación", characterDetailVO.affiliation, isDetail = true)
-                    }
+                    TextBreedAndGenreCharacter(
+                        genre = characterDetailVO.race,
+                        breed = characterDetailVO.gender,
+                        isDetail = true
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    TextOtherData("Base KI", characterDetailVO.ki, isDetail = true)
+                    TextOtherData("Total KI", characterDetailVO.maxKi, isDetail = true)
+                    TextOtherData("Afiliación", characterDetailVO.affiliation, isDetail = true)
                 }
-                Column(
+            }
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(0.6f)
+                    .padding(8.dp)
+                    .verticalScroll(rememberScrollState())
+                    .weight(weight = 1f, fill = false)
+            ) {
+                TitleDescription(
                     Modifier
-                        .fillMaxWidth()
-                        .background(InferiorBackgroundColor)
-                        .weight(0.6f)
-                        .verticalScroll(rememberScrollState())
-                        .weight(weight = 1f, fill = false)
-                ) {
-                    TitleDescription(
+                        .align(Alignment.CenterHorizontally)
+                        .padding(8.dp)
+                )
+                SubTitleDescription(description = characterDetailVO.description)
+                if (characterDetailVO.transformations.isNotEmpty()) {
+                    TitleTransformation(
                         Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(8.dp)
                     )
-                    SubTitleDescription(description = characterDetailVO.description)
-                    if (characterDetailVO.transformations.isNotEmpty()) {
-                        TitleTransformation(
-                            Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(8.dp)
-                        )
-                        LazyRow {
-                            items(characterDetailVO.transformations, key = { it.id }) {
-                                ItemTransformation(it)
-                            }
+                    LazyRow {
+                        items(characterDetailVO.transformations, key = { it.id }) {
+                            ItemTransformation(it)
                         }
                     }
                 }
@@ -158,7 +150,6 @@ fun ItemTransformation(item: Transformation) {
         Column(
             Modifier
                 .size(220.dp)
-                .background(SuperiorBackgroundColor)
                 .padding(4.dp)
         ) {
             ImageCharacter(
@@ -183,10 +174,9 @@ fun ItemTransformation(item: Transformation) {
 @Composable
 fun TitleTransformation(modifier: Modifier = Modifier) {
     Text(
-        text = "Transformaciones",
+        text = stringResource(R.string.character_detail_label_transformations),
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
-        color = Color.White,
         modifier = modifier
     )
 }
@@ -195,7 +185,6 @@ fun TitleTransformation(modifier: Modifier = Modifier) {
 fun SubTitleDescription(description: String) {
     Text(
         text = description,
-        color = Color.White,
         fontWeight = FontWeight.SemiBold,
         fontSize = 12.sp,
         modifier = Modifier.padding(8.dp)
@@ -208,7 +197,6 @@ fun TitleDescription(modifier: Modifier = Modifier) {
         text = "Descripción",
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
-        color = Color.White,
         modifier = modifier
     )
 }

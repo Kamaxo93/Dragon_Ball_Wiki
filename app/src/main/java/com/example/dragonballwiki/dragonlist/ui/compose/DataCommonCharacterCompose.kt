@@ -2,6 +2,7 @@ package com.example.dragonballwiki.dragonlist.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +18,6 @@ fun NameCharacter(nameCharacter: String, modifier: Modifier = Modifier, isDetail
         text = nameCharacter,
         fontWeight = FontWeight.ExtraBold,
         fontSize = if (isDetail.not()) 32.sp else 16.sp,
-        color = Color.White,
         modifier = modifier.padding(8.dp),
         maxLines = 1
     )
@@ -29,7 +29,7 @@ fun KiTransformationCharacter(kiTransformationCharacter: String, modifier: Modif
         text = kiTransformationCharacter,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        color = Color.White,
+        color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(8.dp)
     )
 }
@@ -50,14 +50,13 @@ fun TextOtherData(title: String, data: String, isDetail: Boolean = false) {
             text = title,
             fontSize = if (isDetail.not()) 20.sp else 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.inversePrimary,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp)
         )
         Text(
             text = data,
             fontSize = if (isDetail.not()) 20.sp else 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFFFBC02D),
             modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
         )
     }
@@ -69,7 +68,6 @@ fun TextBreedAndGenreCharacter(breed: String, genre: String, isDetail: Boolean =
         text = "$breed - $genre",
         fontSize = if (isDetail.not()) 20.sp else 14.sp,
         fontWeight = FontWeight.SemiBold,
-        color = Color(0xFFFBC02D),
         modifier = Modifier.padding(start = 16.dp, top = 8.dp)
     )
 }
