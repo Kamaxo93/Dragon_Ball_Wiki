@@ -12,11 +12,14 @@ import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseC
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.model.toVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class DragonListViewModel (
+@HiltViewModel
+class DragonListViewModel @Inject constructor(
     private val getCharacterListUseCase: GetCharacterListUseCase,
     private val addCharactersLocalDataBaseUseCase: AddCharactersLocalDataBaseUseCase
 ) : ViewModel() {

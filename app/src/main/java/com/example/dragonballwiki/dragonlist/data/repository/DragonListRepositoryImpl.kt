@@ -17,6 +17,7 @@ class DragonListRepositoryImpl(
     private val localDataSource: DragonListLocalDataSource
 ) :
     DragonListRepository {
+
     override suspend fun getCharacterList(): Flow<List<CharacterBO>> {
         return localDataSource.getCharactersList().map {
             it.toBO()

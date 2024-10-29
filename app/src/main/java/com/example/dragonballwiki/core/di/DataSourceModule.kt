@@ -2,14 +2,46 @@ package com.example.dragonballwiki.core.di
 
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSourceImpl
+import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
+import com.example.dragonballwiki.dragonlist.data.local.CharacterListDao
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSourceImpl
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSource
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSourceImpl
-import org.koin.dsl.module
+import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListService
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-val dataSourceModule = module {
-    single<DragonListRemoteDataSource> { DragonListRemoteDataSourceImpl(get()) }
-    single<CharacterDetailRemoteDataSource> { CharacterDetailRemoteDataSourceImpl(get()) }
-    single<DragonListLocalDataSource> { DragonListLocalDataSourceImpl(get()) }
+
+@Module
+@InstallIn(SingletonComponent::class)
+class DataSourceModule {
+
+    @Provides
+    @Singleton
+    fun provideDragonListRemoteDataSource(
+        service: DragonListService
+    ): DragonListRemoteDataSource {
+        return DragonListRemoteDataSourceImpl(service)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCharacterDetailRemoteDataSource(
+        service: CharacterDetailService
+    ): CharacterDetailRemoteDataSource {
+        return CharacterDetailRemoteDataSourceImpl(service)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDragonListLocalDataSource(
+        dao: CharacterListDao
+    ): DragonListLocalDataSource {
+        return DragonListLocalDataSourceImpl(dao)
+    }
+
 }

@@ -8,7 +8,8 @@ interface GetCharacterListUseCase {
     suspend operator fun invoke(): Flow<List<CharacterBO>>
 }
 
-class GetCharacterListUseCaseImpl(private val repository: DragonListRepository): GetCharacterListUseCase {
+class GetCharacterListUseCaseImpl(private val repository: DragonListRepository) :
+    GetCharacterListUseCase {
     override suspend fun invoke(): Flow<List<CharacterBO>> {
         return repository.getCharacterList()
     }

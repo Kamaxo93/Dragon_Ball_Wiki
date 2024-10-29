@@ -8,7 +8,8 @@ interface AddCharactersLocalDataBaseUseCase {
     suspend operator fun invoke(): Flow<AsyncResult<Unit>>
 }
 
-class AddCharactersLocalDataBaseUseCaseImpl(private val repository: DragonListRepository): AddCharactersLocalDataBaseUseCase {
+class AddCharactersLocalDataBaseUseCaseImpl(private val repository: DragonListRepository) :
+    AddCharactersLocalDataBaseUseCase {
     override suspend fun invoke(): Flow<AsyncResult<Unit>> {
         return repository.addCharactersLocalDataBase()
     }

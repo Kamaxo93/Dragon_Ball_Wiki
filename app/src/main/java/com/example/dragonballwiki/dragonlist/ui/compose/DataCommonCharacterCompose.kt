@@ -16,7 +16,7 @@ fun NameCharacter(nameCharacter: String, modifier: Modifier = Modifier, isDetail
     Text(
         text = nameCharacter,
         fontWeight = FontWeight.ExtraBold,
-        fontSize =  if (isDetail.not()) 32.sp else 16.sp,
+        fontSize = if (isDetail.not()) 32.sp else 16.sp,
         color = Color.White,
         modifier = modifier.padding(8.dp),
         maxLines = 1

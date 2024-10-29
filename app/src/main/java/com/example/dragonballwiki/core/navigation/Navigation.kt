@@ -27,10 +27,13 @@ fun NavigationHost() {
                 })
         }
 
-        composable(route = "${Routes.CharactersDetail.route}/?id={${NavArgs.CharacterId.key}}", arguments = listOf(
-            navArgument(NavArgs.CharacterId.key) {
-                type = NavType.StringType
-            })) {
+        composable(
+            route = "${Routes.CharactersDetail.route}/?id={${NavArgs.CharacterId.key}}",
+            arguments = listOf(
+                navArgument(NavArgs.CharacterId.key) {
+                    type = NavType.StringType
+                })
+        ) {
             CharacterDetailScreen()
         }
     }

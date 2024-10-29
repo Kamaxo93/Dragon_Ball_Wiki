@@ -9,7 +9,8 @@ interface GetCharacterDetailUseCase {
     suspend operator fun invoke(id: String): Flow<AsyncResult<CharacterDetailVO>>
 }
 
-class GetCharacterDetailUseCaseImpl(private val repository: CharacterDetailRepository): GetCharacterDetailUseCase {
+class GetCharacterDetailUseCaseImpl(private val repository: CharacterDetailRepository) :
+    GetCharacterDetailUseCase {
     override suspend fun invoke(id: String): Flow<AsyncResult<CharacterDetailVO>> {
         return repository.getCharacterDetail(id)
     }

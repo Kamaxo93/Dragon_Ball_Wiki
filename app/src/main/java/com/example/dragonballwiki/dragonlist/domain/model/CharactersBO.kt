@@ -1,6 +1,6 @@
 package com.example.dragonballwiki.dragonlist.domain.model
 
-data class CharacterBO (
+data class CharacterBO(
     val affiliation: String,
     val description: String,
     val gender: String,

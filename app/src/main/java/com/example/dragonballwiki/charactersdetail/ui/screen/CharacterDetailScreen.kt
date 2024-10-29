@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
 import com.example.dragonballwiki.charactersdetail.ui.model.Transformation
 import com.example.dragonballwiki.charactersdetail.ui.viewmodel.CharacterDetailViewModel
@@ -37,15 +38,14 @@ import com.example.dragonballwiki.dragonlist.ui.screen.LoginBall
 import com.example.dragonballwiki.ui.theme.ColumnBackgroundColor
 import com.example.dragonballwiki.ui.theme.InferiorBackgroundColor
 import com.example.dragonballwiki.ui.theme.SuperiorBackgroundColor
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = koinViewModel()) {
+fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = hiltViewModel()) {
 
     val state = characterDetailViewModel.state
 
-    when  {
+    when {
         state.error?.isNotEmpty().isTrue() -> {
             Box(
                 modifier = Modifier

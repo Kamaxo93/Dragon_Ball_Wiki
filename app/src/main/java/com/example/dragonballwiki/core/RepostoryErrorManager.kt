@@ -33,6 +33,7 @@ object RepositoryErrorManager {
                 code = code(),
                 errorMessage = response()?.errorBody()?.getErrorMessage(),
             )
+
             is UnknownHostException -> AsyncError.ConnectionError
             is SocketTimeoutException -> AsyncError.TimeoutError
             is JsonParseException -> AsyncError.DataParseError

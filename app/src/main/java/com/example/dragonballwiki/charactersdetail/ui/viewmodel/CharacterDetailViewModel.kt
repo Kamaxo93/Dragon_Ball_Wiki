@@ -11,9 +11,12 @@ import com.example.dragonballwiki.charactersdetail.ui.uistate.CharacterDetailSta
 import com.example.dragonballwiki.core.AsyncError
 import com.example.dragonballwiki.core.AsyncResult
 import com.example.dragonballwiki.core.CHARACTER_ID
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CharacterDetailViewModel(
+@HiltViewModel
+class CharacterDetailViewModel @Inject constructor(
     private val getCharacterDetailUseCase: GetCharacterDetailUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -43,7 +46,11 @@ class CharacterDetailViewModel(
                             AsyncError.EmptyResponseError,
                             is AsyncError.ServerError,
                             AsyncError.TimeoutError,
-                            is AsyncError.UnknownError -> state = state.copy(error ="error en la conexíon", characterDetail = null, loading = false)
+                            is AsyncError.UnknownError -> state = state.copy(
+                                error = "error en la conexíon",
+                                characterDetail = null,
+                                loading = false
+                            )
                         }
                     }
 
