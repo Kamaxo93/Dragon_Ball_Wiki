@@ -3,6 +3,9 @@ package com.example.dragonballwiki
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import com.example.dragonballwiki.core.navigation.NavigationHost
 import com.example.dragonballwiki.ui.theme.DragonBallWikiTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,7 +17,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             DragonBallWikiTheme {
-                NavigationHost()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    NavigationHost()
+                }
             }
         }
     }

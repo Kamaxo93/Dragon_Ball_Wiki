@@ -1,7 +1,7 @@
 package com.example.dragonballwiki.charactersdetail.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,20 +46,7 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
 
     when {
         state.error?.isNotEmpty().isTrue() -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-            {
-                Text(
-                    text = "No existen datos del personaje",
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 26.sp,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.Center)
-                )
-            }
+            // Se carga el personaje desde la base de datos
         }
 
         state.loading -> {
@@ -66,12 +54,7 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
         }
 
         state.characterDetail != null -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                CharacterDetail(characterDetailVO = state.characterDetail)
-            }
+            CharacterDetail(characterDetailVO = state.characterDetail)
         }
     }
 }
@@ -79,12 +62,13 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
 @Composable
 fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
     Column(
-        Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        Modifier
+            .fillMaxSize()
     ) {
         Column(Modifier.fillMaxSize()) {
             Row(
                 Modifier
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .weight(0.4f)
             ) {
                 ImageCharacter(
@@ -100,24 +84,35 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                         isDetail = true,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 16.dp)
+                            .padding(vertical = 10.dp)
                     )
                     TextBreedAndGenreCharacter(
                         genre = characterDetailVO.race,
                         breed = characterDetailVO.gender,
                         isDetail = true
                     )
-                    Spacer(modifier = Modifier.size(16.dp))
-                    TextOtherData("Base KI", characterDetailVO.ki, isDetail = true)
-                    TextOtherData("Total KI", characterDetailVO.maxKi, isDetail = true)
-                    TextOtherData("Afiliación", characterDetailVO.affiliation, isDetail = true)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    TextOtherData(
+                        stringResource(R.string.base_ki),
+                        characterDetailVO.ki,
+                        isDetail = true
+                    )
+                    TextOtherData(
+                        stringResource(R.string.maxi_ki),
+                        characterDetailVO.maxKi,
+                        isDetail = true
+                    )
+                    TextOtherData(
+                        stringResource(R.string.affiliation),
+                        characterDetailVO.affiliation,
+                        isDetail = true
+                    )
                 }
             }
             Column(
                 Modifier
                     .fillMaxWidth()
                     .weight(0.6f)
-                    .padding(8.dp)
                     .verticalScroll(rememberScrollState())
                     .weight(weight = 1f, fill = false)
             ) {
@@ -146,26 +141,24 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
 
 @Composable
 fun ItemTransformation(item: Transformation) {
-    Card(Modifier.padding(12.dp)) {
+    Card(Modifier.padding(8.dp)) {
         Column(
             Modifier
-                .size(220.dp)
-                .padding(4.dp)
-        ) {
+                .size(230.dp)
+                .padding(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
             ImageCharacter(
                 urlImage = item.image,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
                     .size(120.dp)
             )
             NameCharacter(
                 nameCharacter = item.name,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
                 isDetail = true
             )
             KiTransformationCharacter(
                 item.ki,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }
@@ -187,16 +180,17 @@ fun SubTitleDescription(description: String) {
         text = description,
         fontWeight = FontWeight.SemiBold,
         fontSize = 12.sp,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(16.dp)
     )
 }
 
+@Preview
 @Composable
 fun TitleDescription(modifier: Modifier = Modifier) {
     Text(
         text = "Descripción",
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
-        modifier = modifier
+        modifier = modifier,
     )
 }

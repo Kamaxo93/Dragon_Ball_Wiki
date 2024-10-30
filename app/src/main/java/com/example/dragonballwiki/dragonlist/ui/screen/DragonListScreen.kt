@@ -19,6 +19,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -89,8 +91,7 @@ private fun CharactersContainerError(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -98,7 +99,6 @@ private fun CharactersContainerError(
             text = stringResource(R.string.character_list_empty),
             fontWeight = FontWeight.ExtraBold,
             fontSize = 32.sp,
-            color = MaterialTheme.colorScheme.error,
             modifier = Modifier
                 .padding(8.dp)
                 .align(Alignment.CenterHorizontally)
@@ -109,7 +109,6 @@ private fun CharactersContainerError(
         }) {
             Text(
                 text = stringResource(R.string.dragon_list_label_error),
-                color = MaterialTheme.colorScheme.onError
             )
         }
     }
@@ -128,8 +127,8 @@ private fun CharactersContainer(
     var isSearchCharacters1 = isSearchCharacters
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .background(Color(0xff272B33)),
     ) {
         SearchBar(
             query = searchCharacter,
@@ -147,8 +146,7 @@ private fun CharactersContainer(
             },
             active = true,
             onActiveChange = {},
-            shadowElevation = 8.dp,
-            modifier = Modifier.background(Color(0xff272B33))
+            shadowElevation = 8.dp
         ) {
             DragonBallList(
                 characters = state.dragonListState,
@@ -189,7 +187,7 @@ fun DragonBallList(
 fun ItemCharacter(character: CharacterVO, onClickElement: (String) -> Unit) {
     Card(
         Modifier
-            .background(Color(0xff272B33))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
             .clickable { onClickElement(character.id.toString()) }) {
         ImageCharacter(
@@ -202,14 +200,14 @@ fun ItemCharacter(character: CharacterVO, onClickElement: (String) -> Unit) {
         )
         InfoCharacter(
             character,
-            Modifier.background(Color.Yellow)
+            Modifier
         )
     }
 }
 
 @Composable
 fun InfoCharacter(character: CharacterVO, modifier: Modifier) {
-    Column(modifier.fillMaxWidth().background(Color(0xEE3B4150))) {
+    Column(modifier.fillMaxWidth()) {
         NameCharacter(character.name, modifier = Modifier.align(Alignment.CenterHorizontally))
         TextBreedAndGenreCharacter(genre = character.gender, breed = character.race)
         TextOtherData(stringResource(R.string.base_ki), character.ki)
@@ -222,8 +220,7 @@ fun InfoCharacter(character: CharacterVO, modifier: Modifier) {
 fun LoginBall(message: String) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

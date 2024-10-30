@@ -1,7 +1,7 @@
 package com.example.dragonballwiki.dragonlist.data.repository
 
-import com.example.dragonballwiki.core.async.AsyncResult
 import com.example.dragonballwiki.core.RepositoryErrorManager
+import com.example.dragonballwiki.core.async.AsyncResult
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSource
 import com.example.dragonballwiki.dragonlist.domain.model.CharacterBO

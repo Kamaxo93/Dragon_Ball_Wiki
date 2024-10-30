@@ -2,11 +2,9 @@ package com.example.dragonballwiki.dragonlist.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,7 +16,7 @@ fun NameCharacter(nameCharacter: String, modifier: Modifier = Modifier, isDetail
         text = nameCharacter,
         fontWeight = FontWeight.ExtraBold,
         fontSize = if (isDetail.not()) 32.sp else 16.sp,
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(6.dp),
         maxLines = 1
     )
 }
@@ -29,7 +27,6 @@ fun KiTransformationCharacter(kiTransformationCharacter: String, modifier: Modif
         text = kiTransformationCharacter,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(8.dp)
     )
 }
@@ -48,16 +45,15 @@ fun TextOtherData(title: String, data: String, isDetail: Boolean = false) {
     Column {
         Text(
             text = title,
-            fontSize = if (isDetail.not()) 20.sp else 14.sp,
+            fontSize = if (isDetail.not()) 20.sp else 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.inversePrimary,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp)
         )
         Text(
             text = data,
             fontSize = if (isDetail.not()) 20.sp else 14.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
+            modifier = Modifier.padding(start = 16.dp, bottom = 10.dp)
         )
     }
 }
@@ -66,7 +62,7 @@ fun TextOtherData(title: String, data: String, isDetail: Boolean = false) {
 fun TextBreedAndGenreCharacter(breed: String, genre: String, isDetail: Boolean = false) {
     Text(
         text = "$breed - $genre",
-        fontSize = if (isDetail.not()) 20.sp else 14.sp,
+        fontSize = if (isDetail.not()) 20.sp else 16.sp,
         fontWeight = FontWeight.SemiBold,
         modifier = Modifier.padding(start = 16.dp, top = 8.dp)
     )
