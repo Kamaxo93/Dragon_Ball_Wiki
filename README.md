@@ -15,8 +15,6 @@ Esta aplicación es una wiki sobre el universo de Dragon Ball. Proporciona infor
 - **Modo oscuro:** Cambia al modo oscuro para una experiencia de lectura más cómoda.
 
 ## Capturas de pantalla
-
-[Inserta aquí algunas capturas de pantalla de tu aplicación]
 ![image](https://github.com/user-attachments/assets/e581ac43-4943-4b4e-9157-27275046ccca)
 ![image](https://github.com/user-attachments/assets/eb1d6860-62e2-4923-a726-fb692f31dafb)
 
