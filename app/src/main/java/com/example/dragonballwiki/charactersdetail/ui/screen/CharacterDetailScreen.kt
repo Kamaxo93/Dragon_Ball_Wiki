@@ -188,7 +188,7 @@ fun SubTitleDescription(description: String) {
 @Composable
 fun TitleDescription(modifier: Modifier = Modifier) {
     Text(
-        text = "Descripción",
+        text = stringResource(R.string.title_description),
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         modifier = modifier,
