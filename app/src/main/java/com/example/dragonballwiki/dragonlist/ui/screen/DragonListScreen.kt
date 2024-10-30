@@ -104,7 +104,7 @@ private fun CharactersContainerError(
                 .align(Alignment.CenterHorizontally)
         )
 
-        Button(modifier = Modifier.padding(16.dp), onClick = {
+        Button(modifier = Modifier.padding(16.dp).background(MaterialTheme.colorScheme.primary), onClick = {
             onReloadClicked()
         }) {
             Text(
