@@ -1,66 +1,106 @@
 package com.example.dragonballwiki.dragonlist.ui.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dragonballwiki.core.AsyncError
-import com.example.dragonballwiki.core.AsyncResult
+import com.example.dragonballwiki.R
+import com.example.dragonballwiki.core.async.AsyncResult
+import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
-import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState
-import com.example.dragonballwiki.dragonlist.ui.uistate.CharacterUiState.Success
+import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
+import com.example.dragonballwiki.dragonlist.ui.model.toVO
+import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DragonListViewModel @Inject constructor(
-    private val getCharacterListUseCase: GetCharacterListUseCase
-
+    private val getCharacterListUseCase: GetCharacterListUseCase,
+    private val addCharactersLocalDataBaseUseCase: AddCharactersLocalDataBaseUseCase
 ) : ViewModel() {
-    private val _uiSate = MutableStateFlow<CharacterUiState>(CharacterUiState.Start)
-    val uiState = _uiSate.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(50000),
-        CharacterUiState.Loading
-    )
+    var state by mutableStateOf(DragonListState())
+        private set
 
-    fun dataState() {
+    private var characterList = listOf<CharacterVO>()
+
+    init {
+        dataState()
+    }
+
+    private fun dataState() {
         viewModelScope.launch(Dispatchers.IO) {
-            getCharacterListUseCase().collect {
-                _uiSate.value = when (it) {
-                    is AsyncResult.Success -> {
-                        Success(
-                            it.data
-                        )
-                    }
+            withContext(Dispatchers.Main) {
+                state = state.copy(error = null, dragonListState = null, loading = true)
+            }
+            getCharacterListUseCase().collect { Characters ->
+                if (Characters.isEmpty()) {
+                    addCharactersLocalDataBaseUseCase().collect {
+                        when (it) {
+                            is AsyncResult.Error -> state = state.copy(
+                                error = R.string.text_error_service,
+                                dragonListState = null,
+                                loading = false
+                            )
 
-                    is AsyncResult.Error -> {
-                        when (it.error) {
-                            AsyncError.ConnectionError -> CharacterUiState.Error("error en la conexíon")
-                            is AsyncError.CustomError -> CharacterUiState.Error("error en la conexíon")
-                            AsyncError.DataParseError -> CharacterUiState.Error("error en la conexíon")
-                            AsyncError.EmptyResponseError -> CharacterUiState.Error("error en la conexíon")
-                            is AsyncError.ServerError -> CharacterUiState.Error("error en la conexíon")
-                            AsyncError.TimeoutError -> CharacterUiState.Error("error en la conexíon")
-                            is AsyncError.UnknownError -> CharacterUiState.Error("error en la conexíon")
+                            is AsyncResult.Loading -> state =
+                                state.copy(error = null, dragonListState = null, loading = true)
+
+                            is AsyncResult.Success -> {}
                         }
                     }
 
-                    is AsyncResult.Loading -> {
-                        CharacterUiState.Loading
-                    }
+                } else {
+                    characterList = Characters.toVO()
+                    state = state.copy(
+                        dragonListState = characterList,
+                        loading = false,
+                        error = null
+                    )
                 }
             }
-
         }
     }
 
-    fun reloadList() {
-        dataState()
+    fun searchCharacter(nameCharacter: String) {
+        state = state.copy(dragonListState =
+        if (nameCharacter.isNotBlank()) {
+            characterList.filter {
+                it.name.contains(
+                    nameCharacter,
+                    true
+                )
+            }
+        } else {
+            characterList
+        }, loading = false, error = null)
+    }
+
+    fun reloadCharacterData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (characterList.isEmpty()) {
+                addCharactersLocalDataBaseUseCase().collect {
+                    when (it) {
+                        is AsyncResult.Error -> state = state.copy(
+                            error = R.string.text_error_service,
+                            dragonListState = null,
+                            loading = false
+                        )
+
+                        is AsyncResult.Loading -> state =
+                            state.copy(error = null, dragonListState = null, loading = true)
+
+                        is AsyncResult.Success -> {
+                            /** la lista al ser un flow, room la actualiza el state si observa algún cambio */
+                            //no-op
+                        }
+                    }
+                }
+            }
+        }
     }
 }

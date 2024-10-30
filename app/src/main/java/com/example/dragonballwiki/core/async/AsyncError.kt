@@ -1,4 +1,4 @@
-package com.example.dragonballwiki.core
+package com.example.dragonballwiki.core.async
 
 sealed class AsyncError {
     data object ConnectionError : AsyncError()

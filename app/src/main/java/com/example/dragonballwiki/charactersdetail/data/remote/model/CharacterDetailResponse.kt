@@ -20,8 +20,6 @@ data class CharacterDetailResponse(
     val maxKi: String,
     @SerializedName("name")
     val name: String,
-    @SerializedName("originPlanet")
-    val originPlanet: OriginPlanetResponse,
     @SerializedName("race")
     val race: String,
     @SerializedName("transformations")

@@ -1,16 +1,17 @@
 package com.example.dragonballwiki.core.di
 
-import android.content.Context
-import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSource
-import com.example.dragonballwiki.charactersdetail.data.datasource.CharacterDetailDataSourceImpl
+import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
+import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSourceImpl
 import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
+import com.example.dragonballwiki.dragonlist.data.local.CharacterListDao
+import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
+import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSourceImpl
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSource
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSourceImpl
 import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -30,9 +31,17 @@ class DataSourceModule {
     @Provides
     @Singleton
     fun provideCharacterDetailRemoteDataSource(
-        service: CharacterDetailService,
-    ): CharacterDetailDataSource {
-        return CharacterDetailDataSourceImpl(service)
+        service: CharacterDetailService
+    ): CharacterDetailRemoteDataSource {
+        return CharacterDetailRemoteDataSourceImpl(service)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDragonListLocalDataSource(
+        dao: CharacterListDao
+    ): DragonListLocalDataSource {
+        return DragonListLocalDataSourceImpl(dao)
     }
 
 }
