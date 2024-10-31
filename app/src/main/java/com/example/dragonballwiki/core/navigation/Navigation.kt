@@ -1,8 +1,11 @@
 package com.example.dragonballwiki.core.navigation
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import android.app.Activity
+import android.util.Log
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,10 +19,13 @@ import com.example.dragonballwiki.dragonlist.ui.screen.DragonListScreen
 fun NavigationHost() {
 
     val navigationController = rememberNavController()
+    val context = LocalContext.current
     NavHost(
         navController = navigationController,
-        startDestination = Routes.DragonList.route
+        startDestination = Routes.DragonList.route,
+
     ) {
+
         composable(route = Routes.DragonList.route) {
             DragonListScreen(
                 onClickElement = {
@@ -27,6 +33,11 @@ fun NavigationHost() {
                         launchSingleTop = true
                     }
                 })
+            BackHandler(enabled = true)  {
+                if (!navigationController.popBackStack()) {
+                    (context as? Activity)?.finish()
+                }
+            }
         }
 
         composable(

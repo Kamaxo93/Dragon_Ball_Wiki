@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.charactersdetail.ui.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +63,8 @@ fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = h
 
 @Composable
 fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     Column(
         Modifier
             .fillMaxSize()
@@ -69,7 +73,7 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
             Row(
                 Modifier
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .weight(0.4f)
+                    .weight(0.5f)
             ) {
                 ImageCharacter(
                     characterDetailVO.image,
@@ -78,35 +82,56 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                         .fillMaxHeight()
                         .fillMaxWidth(0.4f)
                 )
-                Column(Modifier.fillMaxWidth()) {
+                Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                     NameCharacter(
                         nameCharacter = characterDetailVO.name,
                         isDetail = true,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 10.dp)
                     )
                     TextBreedAndGenreCharacter(
                         genre = characterDetailVO.race,
                         breed = characterDetailVO.gender,
                         isDetail = true
                     )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    TextOtherData(
-                        stringResource(R.string.base_ki),
-                        characterDetailVO.ki,
-                        isDetail = true
-                    )
-                    TextOtherData(
-                        stringResource(R.string.maxi_ki),
-                        characterDetailVO.maxKi,
-                        isDetail = true
-                    )
-                    TextOtherData(
-                        stringResource(R.string.affiliation),
-                        characterDetailVO.affiliation,
-                        isDetail = true
-                    )
+                    if (isLandscape) {
+                        Row {
+                            TextOtherData(
+                                stringResource(R.string.base_ki),
+                                characterDetailVO.ki,
+                                isDetail = true
+                            )
+
+                            TextOtherData(
+                                stringResource(R.string.maxi_ki),
+                                characterDetailVO.maxKi,
+                                isDetail = true
+                            )
+                            TextOtherData(
+                                stringResource(R.string.affiliation),
+                                characterDetailVO.affiliation,
+                                isDetail = true
+                            )
+                        }
+                    } else {
+                        TextOtherData(
+                            stringResource(R.string.base_ki),
+                            characterDetailVO.ki,
+                            isDetail = true
+                        )
+
+                        TextOtherData(
+                            stringResource(R.string.maxi_ki),
+                            characterDetailVO.maxKi,
+                            isDetail = true
+                        )
+
+                        TextOtherData(
+                            stringResource(R.string.affiliation),
+                            characterDetailVO.affiliation,
+                            isDetail = true
+                        )
+                    }
                 }
             }
             Column(

@@ -12,5 +12,6 @@
     <string name="search_character">Buscar personaje</string>
     <string name="character_detail_label_transformations">Transformaciones</string>
     <string name="title_description">Descripción</string>
+    <string name="character_list_label_breed_genre">Raza %1s - Género %2s</string>
 
 </resources>
