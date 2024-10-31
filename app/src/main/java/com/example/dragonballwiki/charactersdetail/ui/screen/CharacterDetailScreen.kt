@@ -82,7 +82,11 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                         .fillMaxHeight()
                         .fillMaxWidth(0.4f)
                 )
-                Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                ) {
                     NameCharacter(
                         nameCharacter = characterDetailVO.name,
                         isDetail = true,
@@ -90,46 +94,23 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                             .align(Alignment.CenterHorizontally)
                     )
                     TextBreedAndGenreCharacter(
-                        genre = characterDetailVO.race,
-                        breed = characterDetailVO.gender,
+                        genre = characterDetailVO.gender,
+                        breed = characterDetailVO.race,
                         isDetail = true
                     )
                     if (isLandscape) {
                         Row {
-                            TextOtherData(
-                                stringResource(R.string.base_ki),
+                            OtherDataCharacter(
                                 characterDetailVO.ki,
-                                isDetail = true
-                            )
-
-                            TextOtherData(
-                                stringResource(R.string.maxi_ki),
                                 characterDetailVO.maxKi,
-                                isDetail = true
-                            )
-                            TextOtherData(
-                                stringResource(R.string.affiliation),
-                                characterDetailVO.affiliation,
-                                isDetail = true
+                                characterDetailVO.affiliation
                             )
                         }
                     } else {
-                        TextOtherData(
-                            stringResource(R.string.base_ki),
+                        OtherDataCharacter(
                             characterDetailVO.ki,
-                            isDetail = true
-                        )
-
-                        TextOtherData(
-                            stringResource(R.string.maxi_ki),
                             characterDetailVO.maxKi,
-                            isDetail = true
-                        )
-
-                        TextOtherData(
-                            stringResource(R.string.affiliation),
-                            characterDetailVO.affiliation,
-                            isDetail = true
+                            characterDetailVO.affiliation
                         )
                     }
                 }
@@ -172,7 +153,8 @@ fun ItemTransformation(item: Transformation) {
                 .size(230.dp)
                 .padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Center
+        ) {
             ImageCharacter(
                 urlImage = item.image,
                 modifier = Modifier
@@ -206,6 +188,28 @@ fun SubTitleDescription(description: String) {
         fontWeight = FontWeight.SemiBold,
         fontSize = 12.sp,
         modifier = Modifier.padding(16.dp)
+    )
+}
+
+@Composable
+fun OtherDataCharacter(ki: String, maxKi: String, affiliation: String, isDetail: Boolean = true) {
+
+    TextOtherData(
+        stringResource(R.string.base_ki),
+        ki,
+        isDetail = isDetail
+    )
+
+    TextOtherData(
+        stringResource(R.string.maxi_ki),
+        maxKi,
+        isDetail = isDetail
+    )
+
+    TextOtherData(
+        stringResource(R.string.affiliation),
+        affiliation,
+        isDetail = isDetail
     )
 }
 
