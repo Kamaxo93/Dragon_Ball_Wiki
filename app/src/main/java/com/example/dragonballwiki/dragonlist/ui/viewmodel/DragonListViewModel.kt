@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.dragonlist.ui.viewmodel
 
+import androidx.annotation.MainThread
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,9 +27,14 @@ class DragonListViewModel @Inject constructor(
     var state by mutableStateOf(DragonListState())
         private set
 
+    private var isInitialized = false
+
     private var characterList = listOf<CharacterVO>()
 
-    init {
+    @MainThread
+    fun initializeDataState() {
+        if (isInitialized) return
+        isInitialized = true
         dataState()
     }
 

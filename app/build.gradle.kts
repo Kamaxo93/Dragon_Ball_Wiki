@@ -4,11 +4,12 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kapt)
     alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.jetbrainsKotlinSerialization)
 }
 
 android {
     namespace = "com.example.dragonballwiki"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.dragonballwiki"
@@ -73,6 +74,7 @@ dependencies {
 
     //Navigation
     implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     //Retrofit
     implementation(libs.retrofit)

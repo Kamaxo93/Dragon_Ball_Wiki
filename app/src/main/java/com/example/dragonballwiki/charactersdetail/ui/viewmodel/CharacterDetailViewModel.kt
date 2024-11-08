@@ -1,16 +1,15 @@
 package com.example.dragonballwiki.charactersdetail.ui.viewmodel
 
+import androidx.annotation.MainThread
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dragonballwiki.charactersdetail.data.remote.mapper.toVO
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailErrorUseCase
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCase
 import com.example.dragonballwiki.charactersdetail.ui.uistate.CharacterDetailState
-import com.example.dragonballwiki.core.Constant.CHARACTER_ID
 import com.example.dragonballwiki.core.async.AsyncError
 import com.example.dragonballwiki.core.async.AsyncResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,16 +20,18 @@ import javax.inject.Inject
 class CharacterDetailViewModel @Inject constructor(
     private val getCharacterDetailUseCase: GetCharacterDetailUseCase,
     private val getCharacterDetailErrorUseCase: GetCharacterDetailErrorUseCase,
-    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var state by mutableStateOf(CharacterDetailState())
         private set
 
-    val id = savedStateHandle.get<String>(CHARACTER_ID)
+    private var isInitialized = false
 
-    init {
-        getCharacterDetail(id.orEmpty())
+    @MainThread
+    fun initializeDataState(id: String) {
+        if (isInitialized) return
+        isInitialized = true
+        getCharacterDetail(id)
     }
 
     private fun getCharacterDetail(id: String) {
