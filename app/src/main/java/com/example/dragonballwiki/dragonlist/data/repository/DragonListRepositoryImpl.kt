@@ -22,7 +22,6 @@ class DragonListRepositoryImpl(
         return localDataSource.getCharactersList().map {
             it.toBO()
         }
-
     }
 
     override suspend fun addCharactersLocalDataBase(): Flow<AsyncResult<Unit>> {

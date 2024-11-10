@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -55,13 +56,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun DragonListScreen(
     dragonListViewModel: DragonListViewModel = hiltViewModel(),
+    searchCharacter: String,
+    onChangeSearchCharacter: (String) -> Unit,
     onClickElement: (String) -> Unit
 ) {
     val state = dragonListViewModel.state
 
-    var searchCharacter by rememberSaveable {
-        mutableStateOf("")
-    }
     val isSearchCharacters by rememberSaveable {
         mutableStateOf(false)
 
@@ -85,10 +85,8 @@ fun DragonListScreen(
                 state = state,
                 onClickElement = onClickElement,
                 onSearchCharacter = {
+                    onChangeSearchCharacter(it)
                     dragonListViewModel.searchCharacter(it)
-                },
-                searchCharacterChange = {
-                    searchCharacter = it
                 })
         }
     }
@@ -117,8 +115,8 @@ private fun CharactersContainerError(
             modifier = Modifier
                 .padding(16.dp)
                 .background(MaterialTheme.colorScheme.primary), onClick = {
-            onReloadClicked()
-        }) {
+                onReloadClicked()
+            }) {
             Text(
                 text = stringResource(R.string.dragon_list_label_error),
             )
@@ -132,7 +130,6 @@ private fun CharactersContainer(
     isSearchCharacters: Boolean,
     state: DragonListState,
     onClickElement: (String) -> Unit,
-    searchCharacterChange: (String) -> Unit,
     onSearchCharacter: (String) -> Unit
 ) {
     var isSearchCharacters1 = isSearchCharacters
@@ -141,20 +138,23 @@ private fun CharactersContainer(
             .fillMaxSize()
             .imePadding()
     ) {
-        SearchBar(onSearch = {
-            onSearchCharacter(it)
-            isSearchCharacters1 = true
-        })
+        SearchBar(searchCharacter = searchCharacter,
+            onSearch = {
+                onSearchCharacter(it)
+                isSearchCharacters1 = true
+            }, onClear = {
+                isSearchCharacters1 = it
+            })
 
         DragonBallList(
-                characters = state.dragonListState,
-                isSearchCharacters = isSearchCharacters1,
-                onClickElement = {
-                    onClickElement(
-                        it
-                    )
-                    isSearchCharacters1 = false
-                })
+            characters = state.dragonListState,
+            isSearchCharacters = isSearchCharacters1,
+            onClickElement = {
+                onClickElement(
+                    it
+                )
+                isSearchCharacters1 = false
+            })
 
     }
 }
@@ -248,14 +248,15 @@ fun LoginBall(message: String) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewRecycler() {
-    SearchBar { }
 }
 
 @Composable
 fun SearchBar(
-    onSearch: (String) -> Unit
+    searchCharacter: String,
+    onSearch: (String) -> Unit,
+    onClear: (Boolean) -> Unit,
 ) {
-    var searchText by remember { mutableStateOf("") }
+    var searchText by remember { mutableStateOf(searchCharacter) }
 
     TextField(
         value = searchText,
@@ -268,6 +269,18 @@ fun SearchBar(
                 imageVector = Icons.Filled.Search,
                 contentDescription = "Search"
             )
+        },
+        trailingIcon = {
+            if (searchText.isNotEmpty()) {
+                Icon(
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = "Search",
+                    modifier = Modifier.clickable {
+                        searchText = ""
+                        onSearch(searchText)
+                        onClear(true)
+                    })
+            }
         },
         modifier = Modifier
             .fillMaxWidth()
