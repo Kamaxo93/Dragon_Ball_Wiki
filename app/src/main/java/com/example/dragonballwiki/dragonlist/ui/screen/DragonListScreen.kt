@@ -62,7 +62,7 @@ fun DragonListScreen(
 ) {
     val state = dragonListViewModel.state
 
-    val isSearchCharacters by rememberSaveable {
+    var isSearchCharacters by rememberSaveable {
         mutableStateOf(false)
 
     }
@@ -85,6 +85,7 @@ fun DragonListScreen(
                 state = state,
                 onClickElement = onClickElement,
                 onSearchCharacter = {
+                    isSearchCharacters = false
                     onChangeSearchCharacter(it)
                     dragonListViewModel.searchCharacter(it)
                 })
