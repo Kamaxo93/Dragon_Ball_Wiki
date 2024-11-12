@@ -28,7 +28,9 @@ fun NavigationHost() {
                     searchCharacter = it
                 },
                 onClickElement = {
-                    navigationController.navigate(CharacterDetail(it))
+                    navigationController.navigate(CharacterDetail(it)) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
