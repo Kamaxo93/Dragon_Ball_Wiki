@@ -19,32 +19,38 @@ class DragonListRepositoryImpl(
     DragonListRepository {
 
     override suspend fun getCharacterList(): Flow<List<CharacterBO>> {
-        return localDataSource.getCharactersList().map {
+        val list = localDataSource.getCharactersList().map {
             it.toBO()
         }
 
-    }
-
-    override suspend fun addCharactersLocalDataBase(): Flow<AsyncResult<Unit>> {
         return flow {
-            getCharacterListRemote().collect {
-                when (it) {
-                    is AsyncResult.Success -> {
-                        localDataSource.addCharacters(it.data.toEntity())
-                        emit(AsyncResult.Success(Unit))
-                    }
+            list.collect {
+                if (it.isEmpty()) {
+                    addCharactersLocalDataBase()
 
-                    is AsyncResult.Error -> {
-                        emit(AsyncResult.Error(it.error))
-                    }
-
-                    is AsyncResult.Loading -> {
-                        emit(AsyncResult.Loading())
-                    }
+                } else {
+                    emit(it)
                 }
             }
         }
     }
+
+    private suspend fun addCharactersLocalDataBase() {
+        getCharacterListRemote().collect {
+                when (it) {
+                    is AsyncResult.Success -> {
+                        localDataSource.addCharacters(it.data.toEntity())
+                    }
+
+                    is AsyncResult.Error -> {
+                        throw Exception()
+                    }
+                    is AsyncResult.Loading -> {
+
+                    }
+                }
+            }
+        }
 
     private suspend fun getCharacterListRemote(): Flow<AsyncResult<List<CharacterBO>>> =
         RepositoryErrorManager.wrap { remoteDataSource.getCharacterList() }

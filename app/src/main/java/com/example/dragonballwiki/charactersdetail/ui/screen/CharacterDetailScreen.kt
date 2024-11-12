@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,8 +41,12 @@ import com.example.dragonballwiki.dragonlist.ui.screen.LoginBall
 
 
 @Composable
-fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = hiltViewModel()) {
+fun CharacterDetailScreen(
+    characterDetailViewModel: CharacterDetailViewModel = hiltViewModel(),
+    id: String,
+) {
 
+    characterDetailViewModel.initializeDataState(id)
     val state = characterDetailViewModel.state
 
     when {
@@ -68,8 +71,7 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
     Column(
         Modifier
             .fillMaxSize()
-    ) {
-        Column(Modifier.fillMaxSize()) {
+            .verticalScroll(rememberScrollState())) {
             Row(
                 Modifier
                     .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -85,7 +87,6 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
                 ) {
                     NameCharacter(
                         nameCharacter = characterDetailVO.name,
@@ -141,7 +142,6 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                     }
                 }
             }
-        }
     }
 }
 

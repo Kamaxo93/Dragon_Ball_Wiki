@@ -1,58 +1,41 @@
 package com.example.dragonballwiki.core.navigation
 
-import android.app.Activity
-import android.util.Log
-import androidx.activity.OnBackPressedDispatcher
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavType
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.example.dragonballwiki.charactersdetail.ui.screen.CharacterDetailScreen
-import com.example.dragonballwiki.core.Constant.CHARACTER_ID
 import com.example.dragonballwiki.dragonlist.ui.screen.DragonListScreen
 
 @Composable
 fun NavigationHost() {
-
+    var searchCharacter by remember { mutableStateOf("") }
     val navigationController = rememberNavController()
-    val context = LocalContext.current
     NavHost(
         navController = navigationController,
-        startDestination = Routes.DragonList.route,
-
+        startDestination = DragonBallList
     ) {
 
-        composable(route = Routes.DragonList.route) {
+        composable<DragonBallList> { backStackEntry ->
             DragonListScreen(
+                searchCharacter = searchCharacter,
+                onChangeSearchCharacter = {
+                    searchCharacter = it
+                },
                 onClickElement = {
-                    navigationController.navigate(Routes.CharactersDetail.createRoute(it)) {
-                        launchSingleTop = true
-                    }
-                })
-            BackHandler(enabled = true)  {
-                if (!navigationController.popBackStack()) {
-                    (context as? Activity)?.finish()
+                    navigationController.navigate(CharacterDetail(it))
                 }
-            }
+            )
         }
 
-        composable(
-            route = "${Routes.CharactersDetail.route}/?id={${NavArgs.CharacterId.key}}",
-            arguments = listOf(
-                navArgument(NavArgs.CharacterId.key) {
-                    type = NavType.StringType
-                })
-        ) {
-            CharacterDetailScreen()
+        composable<CharacterDetail> { backStackEntry ->
+            val characterDetail: CharacterDetail = backStackEntry.toRoute()
+            CharacterDetailScreen(id = characterDetail.id)
         }
     }
-
-}
-
-enum class NavArgs(val key: String) {
-    CharacterId(CHARACTER_ID)
 }
