@@ -55,22 +55,24 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DragonListScreen(
-    dragonListViewModel: DragonListViewModel = hiltViewModel(),
+    state: DragonListState,
     searchCharacter: String,
     onChangeSearchCharacter: (String) -> Unit,
-    onClickElement: (String) -> Unit
+    onClickElement: (String) -> Unit,
+    onReloadClicked: () -> Unit,
+    onSearchCharacter: (String) -> Unit,
 ) {
-    val state = dragonListViewModel.state
+    val state = state
 
     var isSearchCharacters by rememberSaveable {
         mutableStateOf(false)
 
     }
-    dragonListViewModel.initializeDataState()
+
     when {
         state.error != null -> {
             CharactersContainerError {
-                dragonListViewModel.reloadCharacterData()
+               onReloadClicked()
             }
         }
 
@@ -87,7 +89,7 @@ fun DragonListScreen(
                 onSearchCharacter = {
                     isSearchCharacters = false
                     onChangeSearchCharacter(it)
-                    dragonListViewModel.searchCharacter(it)
+                    onSearchCharacter(it)
                 })
         }
     }
