@@ -24,7 +24,7 @@ fun NavigationHost() {
         startDestination = DragonBallList
     ) {
         viewModel.initializeDataState()
-        composable<DragonBallList> { backStackEntry ->
+        composable<DragonBallList> {
             DragonListScreen(
                 state = viewModel.state,
                 searchCharacter = searchCharacter,
