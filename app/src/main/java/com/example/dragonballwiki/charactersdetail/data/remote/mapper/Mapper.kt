@@ -4,6 +4,7 @@ import com.example.dragonballwiki.charactersdetail.data.remote.model.CharacterDe
 import com.example.dragonballwiki.charactersdetail.data.remote.model.TransformationResponse
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
 import com.example.dragonballwiki.charactersdetail.ui.model.Transformation
+import com.example.dragonballwiki.core.Constant.EMPTY
 import com.example.dragonballwiki.dragonlist.data.local.model.CharacterEntity
 
 fun CharacterDetailResponse.toVO(): CharacterDetailVO =
@@ -17,7 +18,10 @@ fun CharacterDetailResponse.toVO(): CharacterDetailVO =
         maxKi = maxKi,
         name = name,
         race = race,
-        transformations = transformations.toVO()
+        transformations = transformations.toVO(),
+        imagePlanet = originPlanet.image.orEmpty(),
+        namePlanet = originPlanet.name.orEmpty(),
+        descriptionPlanet = originPlanet.description.orEmpty()
     )
 
 private fun List<TransformationResponse>.toVO(): List<Transformation> =
@@ -38,5 +42,8 @@ fun CharacterEntity.toVO(): CharacterDetailVO =
         maxKi = maxKi,
         name = name,
         race = race,
-        transformations = emptyList()
+        transformations = emptyList(),
+        imagePlanet = EMPTY,
+        namePlanet = EMPTY,
+        descriptionPlanet = EMPTY
     )

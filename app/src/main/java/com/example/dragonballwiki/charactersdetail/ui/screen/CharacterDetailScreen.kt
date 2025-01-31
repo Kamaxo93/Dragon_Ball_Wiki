@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -128,7 +129,10 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                         .align(Alignment.CenterHorizontally)
                         .padding(8.dp)
                 )
-                SubTitleDescription(description = characterDetailVO.description)
+                SubTitleDescription(characterDetailVO.description)
+                if (characterDetailVO.name.isNotEmpty()) {
+                    PlanetContent(characterDetailVO)
+                }
                 if (characterDetailVO.transformations.isNotEmpty()) {
                     TitleTransformation(
                         Modifier
@@ -142,6 +146,23 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                     }
                 }
             }
+    }
+}
+
+@Composable
+fun PlanetContent(characterDetailVO: CharacterDetailVO) {
+    Column {
+        TitlePlanet(modifier = Modifier.align(Alignment.CenterHorizontally))
+        Spacer(modifier = Modifier.size(8.dp))
+        Column  {
+            Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                ImageCharacter(characterDetailVO.imagePlanet)
+            }
+            Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                NameCharacter(characterDetailVO.namePlanet, modifier = Modifier.align(Alignment.CenterHorizontally))
+                SubTitleDescription(characterDetailVO.descriptionPlanet)
+            }
+        }
     }
 }
 
@@ -175,6 +196,16 @@ fun ItemTransformation(item: Transformation) {
 fun TitleTransformation(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.character_detail_label_transformations),
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun TitlePlanet(modifier: Modifier = Modifier) {
+    Text(
+        text = "Planeta",
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         modifier = modifier
