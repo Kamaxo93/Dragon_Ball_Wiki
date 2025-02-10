@@ -10,6 +10,8 @@ activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 hilt = "2.52"
 hiltNavigation = "1.2.0"
+mockitoKotlin = "4.0.0"
+mockk = "1.13.8"
 navigation = "2.8.5"
 constraintlayoutCompose = "1.1.0"
 material = "1.7.6"
@@ -20,8 +22,6 @@ coil = "2.7.0"
 room = "2.6.1"
 kotlinxSerialization = "1.6.3"
 annotation = "1.7.1"
-mockito = "5.5.0"
-mockitoInline = "4.0.0"
 coroutinesText = "1.8.0"
 
 [libraries]
@@ -41,6 +41,8 @@ androidx-material-extend = { group = "androidx.compose.material", name = "materi
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
@@ -57,9 +59,6 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitVersion" }
 junit-ext = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
-mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-android-test-mockito = { module = "org.mockito:mockito-android", version.ref = "mockito" }
-android-test-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 
 espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espressoCore" }

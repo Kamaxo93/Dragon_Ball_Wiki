@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.core.di
 
+import android.content.SharedPreferences
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.repository.CharacterDetailRepositoryImpl
 import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDetailRepository
@@ -21,9 +22,10 @@ class RepositoryModule {
     @Singleton
     fun provideDragonListRepository(
         remoteDatasource: DragonListRemoteDataSource,
-        localDataSource: DragonListLocalDataSource
+        localDataSource: DragonListLocalDataSource,
+        @MySharedPrefs sharedPreferences: SharedPreferences
     ): DragonListRepository {
-        return DragonListRepositoryImpl(remoteDatasource, localDataSource)
+        return DragonListRepositoryImpl(remoteDatasource, localDataSource, sharedPreferences)
     }
 
     @Provides

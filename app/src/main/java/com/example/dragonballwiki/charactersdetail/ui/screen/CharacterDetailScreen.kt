@@ -1,7 +1,14 @@
 package com.example.dragonballwiki.charactersdetail.ui.screen
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +26,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -69,14 +80,24 @@ fun CharacterDetailScreen(
 fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    var isExpanded by remember { mutableStateOf(true) }
+
     Column(
         Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())) {
+            .verticalScroll(rememberScrollState())
+    ) {
+        androidx.compose.animation.AnimatedVisibility(
+            visible = isExpanded,
+            enter = expandVertically(animationSpec = tween(durationMillis = 500)) + fadeIn(animationSpec = tween(durationMillis = 500)),
+            exit = shrinkVertically(animationSpec = tween(durationMillis = 500)) + fadeOut(animationSpec = tween(durationMillis = 500))
+        ) {
             Row(
                 Modifier
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .weight(0.5f)
+                    .fillMaxWidth()
+                    .animateContentSize(animationSpec = tween(durationMillis = 500))
+                    .clickable { isExpanded = !isExpanded }
             ) {
                 ImageCharacter(
                     characterDetailVO.image,
@@ -117,35 +138,56 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                     }
                 }
             }
-            Column(
+        }
+        androidx.compose.animation.AnimatedVisibility(
+            visible = !isExpanded,
+            enter = expandVertically(animationSpec = tween(durationMillis = 500)) + fadeIn(animationSpec = tween(durationMillis = 500)),
+            exit = shrinkVertically(animationSpec = tween(durationMillis = 500)) + fadeOut(animationSpec = tween(durationMillis = 500))
+        ) {
+            Row(
                 Modifier
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .fillMaxWidth()
-                    .weight(0.6f)
-                    .verticalScroll(rememberScrollState())
-                    .weight(weight = 1f, fill = false)
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 500
+                        )
+                    )
+                    .clickable { isExpanded = !isExpanded }
             ) {
-                TitleDescription(
+                NameCharacter(
+                    nameCharacter = characterDetailVO.name,
+                    isDetail = true,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+        Column(
+            Modifier
+                .fillMaxWidth()
+        ) {
+            TitleDescription(
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(8.dp)
+            )
+            SubTitleDescription(characterDetailVO.description)
+            if (characterDetailVO.name.isNotEmpty()) {
+                PlanetContent(characterDetailVO)
+            }
+            if (characterDetailVO.transformations.isNotEmpty()) {
+                TitleTransformation(
                     Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(8.dp)
                 )
-                SubTitleDescription(characterDetailVO.description)
-                if (characterDetailVO.name.isNotEmpty()) {
-                    PlanetContent(characterDetailVO)
-                }
-                if (characterDetailVO.transformations.isNotEmpty()) {
-                    TitleTransformation(
-                        Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(8.dp)
-                    )
-                    LazyRow {
-                        items(characterDetailVO.transformations, key = { it.id }) {
-                            ItemTransformation(it)
-                        }
+                LazyRow {
+                    items(characterDetailVO.transformations, key = { it.id }) {
+                        ItemTransformation(it)
                     }
                 }
             }
+        }
     }
 }
 
