@@ -155,10 +155,8 @@ fun CharacterDetail(characterDetailVO: CharacterDetailVO) {
                     )
                     .clickable { isExpanded = !isExpanded }
             ) {
-                NameCharacter(
-                    nameCharacter = characterDetailVO.name,
-                    isDetail = true,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                NameCharacterDetail(
+                    nameCharacter = characterDetailVO.name
                 )
             }
         }
@@ -266,7 +264,6 @@ fun SubTitleDescription(description: String) {
 
 @Composable
 fun OtherDataCharacter(ki: String, maxKi: String, affiliation: String, isDetail: Boolean = true) {
-
     TextOtherData(
         stringResource(R.string.base_ki),
         ki,
@@ -284,6 +281,19 @@ fun OtherDataCharacter(ki: String, maxKi: String, affiliation: String, isDetail:
         affiliation,
         isDetail = isDetail
     )
+}
+
+@Composable
+fun NameCharacterDetail(nameCharacter: String) {
+   Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+       Text(
+           text = nameCharacter,
+           fontWeight = FontWeight.ExtraBold,
+           fontSize =  32.sp,
+           modifier = Modifier.padding(12.dp).align(Alignment.CenterHorizontally),
+           maxLines = 1
+       )
+   }
 }
 
 @Preview

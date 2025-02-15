@@ -1,5 +1,9 @@
 package com.example.dragonballwiki.core.di
 
+import com.example.dragonballwiki.charactersdetail.data.local.dao.CharacterDao
+import com.example.dragonballwiki.charactersdetail.data.local.dao.TransformationDao
+import com.example.dragonballwiki.charactersdetail.data.local.datasource.CharacterDetailLocalDataSource
+import com.example.dragonballwiki.charactersdetail.data.local.datasource.CharacterDetailLocalDataSourceImpl
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSourceImpl
 import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
@@ -44,4 +48,12 @@ class DataSourceModule {
         return DragonListLocalDataSourceImpl(dao)
     }
 
+    @Provides
+    @Singleton
+    fun provideCharacterDetailLocalDataSource(
+        characterDao: CharacterDao,
+        transformationDao: TransformationDao
+    ): CharacterDetailLocalDataSource {
+        return CharacterDetailLocalDataSourceImpl(characterDao, transformationDao)
+    }
 }

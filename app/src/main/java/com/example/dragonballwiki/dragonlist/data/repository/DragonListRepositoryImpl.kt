@@ -1,6 +1,8 @@
 package com.example.dragonballwiki.dragonlist.data.repository
 
 import android.content.SharedPreferences
+import com.example.dragonballwiki.core.Constant.DEFAULT_LONG
+import com.example.dragonballwiki.core.Constant.THREE_DAY_MILLI_SECONDS
 import com.example.dragonballwiki.core.Constant.TIME_RELOAD
 import com.example.dragonballwiki.core.RepositoryErrorManager
 import com.example.dragonballwiki.core.async.AsyncResult
@@ -23,6 +25,8 @@ class DragonListRepositoryImpl(
     @MySharedPrefs private val sharedPreferences: SharedPreferences,
 ) : DragonListRepository {
 
+    private val timeNow = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
+
     override suspend fun getCharacterList(): Flow<List<CharacterBO>> {
         val list = localDataSource.getCharactersList().map {
             it.toBO()
@@ -30,13 +34,13 @@ class DragonListRepositoryImpl(
 
         return flow {
             list.collect {
-                val timeNow = LocalDateTime.now().toInstant(
-                    ZoneOffset.UTC
-                ).toEpochMilli()
-                val timeReload = sharedPreferences.getLong(TIME_RELOAD, 0L) + 259200000
                 if (it.isEmpty() ||
-                    timeNow >= timeReload) {
-                    addCharactersLocalDataBase()
+                    timeNow >= getTimeReload()) {
+                    try {
+                        addCharactersLocalDataBase()
+                    } catch (e: Exception) {
+                        emit(listOf())
+                    }
 
                 } else {
                     emit(it)
@@ -51,6 +55,7 @@ class DragonListRepositoryImpl(
                 ZoneOffset.UTC
             ).toEpochMilli()
         ).apply()
+
         getCharacterListRemote().collect {
                 when (it) {
                     is AsyncResult.Success -> {
@@ -61,7 +66,7 @@ class DragonListRepositoryImpl(
                         throw Exception()
                     }
                     is AsyncResult.Loading -> {
-
+                        //no-op
                     }
                 }
             }
@@ -69,4 +74,6 @@ class DragonListRepositoryImpl(
 
     private suspend fun getCharacterListRemote(): Flow<AsyncResult<List<CharacterBO>>> =
         RepositoryErrorManager.wrap { remoteDataSource.getCharacterList() }
+
+    private fun getTimeReload(): Long = sharedPreferences.getLong(TIME_RELOAD, DEFAULT_LONG) + THREE_DAY_MILLI_SECONDS
 }

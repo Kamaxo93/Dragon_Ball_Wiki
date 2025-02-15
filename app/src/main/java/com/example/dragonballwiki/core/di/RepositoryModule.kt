@@ -1,6 +1,7 @@
 package com.example.dragonballwiki.core.di
 
 import android.content.SharedPreferences
+import com.example.dragonballwiki.charactersdetail.data.local.datasource.CharacterDetailLocalDataSource
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.repository.CharacterDetailRepositoryImpl
 import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDetailRepository
@@ -32,9 +33,10 @@ class RepositoryModule {
     @Singleton
     fun provideCharacterDetailRepository(
         remoteDataSource: CharacterDetailRemoteDataSource,
-        localDataSource: DragonListLocalDataSource
+        localDataSource: DragonListLocalDataSource,
+        detailLocalDataSource: CharacterDetailLocalDataSource
     ): CharacterDetailRepository {
-        return CharacterDetailRepositoryImpl(remoteDataSource, localDataSource)
+        return CharacterDetailRepositoryImpl(remoteDataSource, localDataSource, detailLocalDataSource)
     }
 
 }

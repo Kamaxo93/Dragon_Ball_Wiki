@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 
-class GetCharacterListUseCaseTest {
+class GetCharacterDetailEntityListUseCaseTest {
 
     @RelaxedMockK
     private lateinit var repository: DragonListRepository
