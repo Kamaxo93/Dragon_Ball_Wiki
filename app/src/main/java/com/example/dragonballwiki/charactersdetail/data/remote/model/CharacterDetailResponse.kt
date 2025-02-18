@@ -23,5 +23,7 @@ data class CharacterDetailResponse(
     @SerializedName("race")
     val race: String,
     @SerializedName("transformations")
-    val transformations: List<TransformationResponse>
+    val transformations: List<TransformationResponse>,
+    @SerializedName("originPlanet")
+    val originPlanet: OriginPlanetResponse
 )

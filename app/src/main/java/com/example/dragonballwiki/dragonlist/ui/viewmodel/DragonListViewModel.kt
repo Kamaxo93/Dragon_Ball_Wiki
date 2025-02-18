@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DragonListViewModel @Inject constructor(
-    private val getCharacterListUseCase: GetCharacterListUseCase, ) : ViewModel() {
+    private val getCharacterListUseCase: GetCharacterListUseCase,
+    ) : ViewModel() {
     var state by mutableStateOf(DragonListState())
         private set
 
@@ -40,19 +41,19 @@ class DragonListViewModel @Inject constructor(
                 state = state.copy(error = null, dragonListState = null, loading = true)
             }
             getCharacterListUseCase().collect {
-                when (it) {
-                    is Exception -> state = state.copy(
+                if (it.isEmpty()) {
+                    state = state.copy(
                         error = R.string.text_error_service,
                         dragonListState = null,
                         loading = false
                     )
-                    else -> {
-                        characterList = it.toVO()
-                        state = state.copy(
-                            error = null,
-                            dragonListState = characterList,
-                            loading = false)
-                    }
+
+                } else {
+                    characterList = it.toVO()
+                    state = state.copy(
+                        error = null,
+                        dragonListState = characterList,
+                        loading = false)
                 }
             }
         }

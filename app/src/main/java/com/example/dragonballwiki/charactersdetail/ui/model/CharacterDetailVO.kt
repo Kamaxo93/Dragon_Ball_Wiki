@@ -10,5 +10,8 @@ data class CharacterDetailVO(
     val maxKi: String,
     val name: String,
     val race: String,
-    val transformations: List<Transformation>
+    val transformations: List<Transformation>,
+    val imagePlanet: String,
+    val namePlanet: String,
+    val descriptionPlanet: String
 )

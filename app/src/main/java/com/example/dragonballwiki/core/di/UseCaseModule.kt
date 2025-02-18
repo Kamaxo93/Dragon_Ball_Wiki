@@ -1,10 +1,10 @@
 package com.example.dragonballwiki.core.di
 
 import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDetailRepository
-import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailErrorUseCase
-import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailErrorUseCaseImpl
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCase
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCaseImpl
+import com.example.dragonballwiki.charactersdetail.domain.usecase.GetTransformations
+import com.example.dragonballwiki.charactersdetail.domain.usecase.GetTransformationsImpl
 import com.example.dragonballwiki.dragonlist.domain.repository.DragonListRepository
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCaseImpl
@@ -29,7 +29,7 @@ class UseCaseModule {
     }
 
     @Provides
-    fun provideGetCharacterDetailErrorUseCase(repository: CharacterDetailRepository): GetCharacterDetailErrorUseCase {
-        return GetCharacterDetailErrorUseCaseImpl(repository)
+    fun provideGetTransformations(repository: CharacterDetailRepository): GetTransformations {
+        return GetTransformationsImpl(repository)
     }
 }
