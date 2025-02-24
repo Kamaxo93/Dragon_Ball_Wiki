@@ -10,7 +10,6 @@ activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 hilt = "2.52"
 hiltNavigation = "1.2.0"
-mockitoKotlin = "4.0.0"
 mockk = "1.13.8"
 navigation = "2.8.5"
 constraintlayoutCompose = "1.1.0"
@@ -41,7 +40,6 @@ androidx-material-extend = { group = "androidx.compose.material", name = "materi
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 navigation-compose = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }

@@ -97,7 +97,6 @@ dependencies {
     testImplementation(libs.espresso)
     testImplementation(libs.espresso.contrib)
     testImplementation(libs.test.coroutines)
-    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockk)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
