@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.dragonlist.data.remote.mapper
 
+import com.example.dragonballwiki.dragonlist.data.local.model.CharacterEntity
 import com.example.dragonballwiki.dragonlist.data.remote.model.CharacterResponse
 import com.example.dragonballwiki.dragonlist.domain.model.CharacterBO
 
@@ -8,6 +9,18 @@ fun CharacterResponse.toBo(): CharacterBO = CharacterBO(
     description = description,
     gender = gender,
     id = id,
+    image = image,
+    ki = ki,
+    maxKi = maxKi,
+    name = name,
+    race = race
+)
+
+fun CharacterBO.toEntity(): CharacterEntity = CharacterEntity(
+    id = id,
+    affiliation = affiliation,
+    description = description,
+    gender = gender,
     image = image,
     ki = ki,
     maxKi = maxKi,

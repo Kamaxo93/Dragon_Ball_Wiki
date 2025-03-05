@@ -27,17 +27,16 @@ class DragonListRepositoryImpl(
 
     private val timeNow = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
 
-    override suspend fun getCharacterList(): Flow<List<CharacterBO>> {
+    override suspend fun getCharacterList(): Flow<List<CharacterBO>> = flow {
         val list = localDataSource.getCharactersList().map {
             it.toBO()
         }
-
-        return flow {
             list.collect {
                 if (it.isEmpty() ||
                     timeNow >= getTimeReload()) {
                     try {
                         addCharactersLocalDataBase()
+
                     } catch (e: Exception) {
                         emit(listOf())
                     }
@@ -46,7 +45,6 @@ class DragonListRepositoryImpl(
                     emit(it)
                 }
             }
-        }
     }
 
     private suspend fun addCharactersLocalDataBase() {

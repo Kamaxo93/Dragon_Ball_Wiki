@@ -4,7 +4,7 @@ import com.example.dragonballwiki.dragonlist.domain.model.CharacterBO
 import com.example.dragonballwiki.dragonlist.domain.repository.DragonListRepository
 import kotlinx.coroutines.flow.Flow
 
-interface GetCharacterListUseCase {
+interface  GetCharacterListUseCase {
     suspend operator fun invoke(): Flow<List<CharacterBO>>
 }
 
