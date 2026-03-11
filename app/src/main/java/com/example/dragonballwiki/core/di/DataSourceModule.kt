@@ -2,46 +2,29 @@ package com.example.dragonballwiki.core.di
 
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSourceImpl
-import com.example.dragonballwiki.charactersdetail.data.remote.service.CharacterDetailService
-import com.example.dragonballwiki.dragonlist.data.local.CharacterListDao
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSourceImpl
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSource
 import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSourceImpl
-import com.example.dragonballwiki.dragonlist.data.remote.service.DragonListService
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-
-@Module
-@InstallIn(SingletonComponent::class)
-class DataSourceModule {
-
-    @Provides
-    @Singleton
-    fun provideDragonListRemoteDataSource(
-        service: DragonListService
-    ): DragonListRemoteDataSource {
-        return DragonListRemoteDataSourceImpl(service)
+/**
+ * Módulo de DataSources con Koin
+ */
+val dataSourceModule = module {
+    
+    // DragonListRemoteDataSource - Singleton
+    single<DragonListRemoteDataSource> {
+        DragonListRemoteDataSourceImpl(service = get())
     }
-
-    @Provides
-    @Singleton
-    fun provideCharacterDetailRemoteDataSource(
-        service: CharacterDetailService
-    ): CharacterDetailRemoteDataSource {
-        return CharacterDetailRemoteDataSourceImpl(service)
+    
+    // CharacterDetailRemoteDataSource - Singleton
+    single<CharacterDetailRemoteDataSource> {
+        CharacterDetailRemoteDataSourceImpl(service = get())
     }
-
-    @Provides
-    @Singleton
-    fun provideDragonListLocalDataSource(
-        dao: CharacterListDao
-    ): DragonListLocalDataSource {
-        return DragonListLocalDataSourceImpl(dao)
+    
+    // DragonListLocalDataSource - Singleton
+    single<DragonListLocalDataSource> {
+        DragonListLocalDataSourceImpl(dao = get())
     }
-
 }

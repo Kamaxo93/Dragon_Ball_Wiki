@@ -1,42 +1,38 @@
 package com.example.dragonballwiki.core.di
 
-import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDetailRepository
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailErrorUseCase
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailErrorUseCaseImpl
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCase
 import com.example.dragonballwiki.charactersdetail.domain.usecase.GetCharacterDetailUseCaseImpl
-import com.example.dragonballwiki.dragonlist.domain.repository.DragonListRepository
 import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCaseImpl
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCaseImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import org.koin.dsl.module
 
-
-@Module
-@InstallIn(SingletonComponent::class)
-class UseCaseModule {
-
-    @Provides
-    fun provideGetCharacterListUseCase(repository: DragonListRepository): GetCharacterListUseCase {
-        return GetCharacterListUseCaseImpl(repository)
+/**
+ * Módulo de Use Cases con Koin
+ * Los Use Cases son Factory (nueva instancia cada vez) en lugar de Singleton
+ */
+val useCaseModule = module {
+    
+    // GetCharacterListUseCase - Factory
+    factory<GetCharacterListUseCase> {
+        GetCharacterListUseCaseImpl(repository = get())
     }
-
-    @Provides
-    fun provideAddCharactersLocalDataBaseUseCase(repository: DragonListRepository): AddCharactersLocalDataBaseUseCase {
-        return AddCharactersLocalDataBaseUseCaseImpl(repository)
+    
+    // AddCharactersLocalDataBaseUseCase - Factory
+    factory<AddCharactersLocalDataBaseUseCase> {
+        AddCharactersLocalDataBaseUseCaseImpl(repository = get())
     }
-
-    @Provides
-    fun provideGetCharacterDetailUseCase(repository: CharacterDetailRepository): GetCharacterDetailUseCase {
-        return GetCharacterDetailUseCaseImpl(repository)
+    
+    // GetCharacterDetailUseCase - Factory
+    factory<GetCharacterDetailUseCase> {
+        GetCharacterDetailUseCaseImpl(repository = get())
     }
-
-    @Provides
-    fun provideGetCharacterDetailErrorUseCase(repository: CharacterDetailRepository): GetCharacterDetailErrorUseCase {
-        return GetCharacterDetailErrorUseCaseImpl(repository)
+    
+    // GetCharacterDetailErrorUseCase - Factory
+    factory<GetCharacterDetailErrorUseCase> {
+        GetCharacterDetailErrorUseCaseImpl(repository = get())
     }
 }

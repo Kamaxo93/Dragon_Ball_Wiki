@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.charactersdetail.ui.model.CharacterDetailVO
 import com.example.dragonballwiki.charactersdetail.ui.model.Transformation
@@ -37,10 +36,11 @@ import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharacter
 import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.screen.LoginBall
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = hiltViewModel()) {
+fun CharacterDetailScreen(characterDetailViewModel: CharacterDetailViewModel = koinViewModel()) {
 
     val state = characterDetailViewModel.state
 

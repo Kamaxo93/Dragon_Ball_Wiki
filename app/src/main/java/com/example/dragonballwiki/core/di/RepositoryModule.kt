@@ -1,38 +1,29 @@
 package com.example.dragonballwiki.core.di
 
-import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.repository.CharacterDetailRepositoryImpl
 import com.example.dragonballwiki.charactersdetail.domain.repository.CharacterDetailRepository
-import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
-import com.example.dragonballwiki.dragonlist.data.remote.datasource.DragonListRemoteDataSource
 import com.example.dragonballwiki.dragonlist.data.repository.DragonListRepositoryImpl
 import com.example.dragonballwiki.dragonlist.domain.repository.DragonListRepository
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class RepositoryModule {
-
-    @Provides
-    @Singleton
-    fun provideDragonListRepository(
-        remoteDatasource: DragonListRemoteDataSource,
-        localDataSource: DragonListLocalDataSource
-    ): DragonListRepository {
-        return DragonListRepositoryImpl(remoteDatasource, localDataSource)
+/**
+ * Módulo de repositorios con Koin
+ */
+val repositoryModule = module {
+    
+    // DragonListRepository - Singleton
+    single<DragonListRepository> {
+        DragonListRepositoryImpl(
+            remoteDataSource = get(),
+            localDataSource = get()
+        )
     }
-
-    @Provides
-    @Singleton
-    fun provideCharacterDetailRepository(
-        remoteDataSource: CharacterDetailRemoteDataSource,
-        localDataSource: DragonListLocalDataSource
-    ): CharacterDetailRepository {
-        return CharacterDetailRepositoryImpl(remoteDataSource, localDataSource)
+    
+    // CharacterDetailRepository - Singleton
+    single<CharacterDetailRepository> {
+        CharacterDetailRepositoryImpl(
+            remoteDataSource = get(),
+            localDataSource = get()
+        )
     }
-
 }

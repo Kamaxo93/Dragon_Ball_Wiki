@@ -13,16 +13,18 @@ import com.example.dragonballwiki.charactersdetail.ui.uistate.CharacterDetailSta
 import com.example.dragonballwiki.core.Constant.CHARACTER_ID
 import com.example.dragonballwiki.core.async.AsyncError
 import com.example.dragonballwiki.core.async.AsyncResult
-import com.example.dragonballwiki.core.di.IoDispatcher
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 /**
  * ViewModel para el detalle de personajes.
+ * 
+ * Migrado de Hilt a Koin:
+ * - Eliminado @HiltViewModel
+ * - Eliminado @Inject y @IoDispatcher
+ * - Constructor normal - Koin inyecta automáticamente
  * 
  * Mejoras aplicadas:
  * - Inyección de CoroutineDispatcher para facilitar testing
@@ -30,11 +32,10 @@ import javax.inject.Inject
  * - Uso de Main dispatcher para actualizaciones de estado UI (thread safety)
  * - withContext(ioDispatcher) solo para operaciones de BD local
  */
-@HiltViewModel
-class CharacterDetailViewModel @Inject constructor(
+class CharacterDetailViewModel(
     private val getCharacterDetailUseCase: GetCharacterDetailUseCase,
     private val getCharacterDetailErrorUseCase: GetCharacterDetailErrorUseCase,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 

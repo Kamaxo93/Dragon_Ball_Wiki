@@ -7,31 +7,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dragonballwiki.R
 import com.example.dragonballwiki.core.async.AsyncResult
-import com.example.dragonballwiki.core.di.IoDispatcher
 import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDataBaseUseCase
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.model.toVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * ViewModel para la lista de personajes de Dragon Ball.
+ * 
+ * Migrado de Hilt a Koin:
+ * - Eliminado @HiltViewModel
+ * - Eliminado @Inject y @IoDispatcher
+ * - Constructor normal - Koin inyecta automáticamente
  * 
  * Mejoras aplicadas:
  * - Inyección de CoroutineDispatcher para facilitar testing
  * - Eliminado nested Flow collectors para prevenir memory leaks
  * - Eliminado withContext innecesario (state updates son main-safe)
  */
-@HiltViewModel
-class DragonListViewModel @Inject constructor(
+class DragonListViewModel(
     private val getCharacterListUseCase: GetCharacterListUseCase,
     private val addCharactersLocalDataBaseUseCase: AddCharactersLocalDataBaseUseCase,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     var state by mutableStateOf(DragonListState())
         private set

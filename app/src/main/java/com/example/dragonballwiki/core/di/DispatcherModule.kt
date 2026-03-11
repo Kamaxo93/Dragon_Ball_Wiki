@@ -1,55 +1,33 @@
 package com.example.dragonballwiki.core.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import javax.inject.Qualifier
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
 /**
- * Módulo DI para proveer CoroutineDispatchers
+ * Módulo DI para proveer CoroutineDispatchers con Koin
+ * 
+ * Migrado de Hilt a Koin usando named qualifiers
+ * - @IoDispatcher → named("IoDispatcher")
+ * - @MainDispatcher → named("MainDispatcher")
+ * - @DefaultDispatcher → named("DefaultDispatcher")
  * 
  * Esto permite:
  * - Testear ViewModels inyectando TestDispatchers
  * - Cambiar estrategias de threading sin modificar código
  * - Seguir mejores prácticas de Clean Architecture
  */
-@Module
-@InstallIn(SingletonComponent::class)
-object DispatcherModule {
-
-    @Provides
-    @IoDispatcher
-    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @Provides
-    @MainDispatcher
-    fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
-
-    @Provides
-    @DefaultDispatcher
-    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+val dispatcherModule = module {
+    single(named(DispatcherQualifiers.IO)) { Dispatchers.IO }
+    single(named(DispatcherQualifiers.MAIN)) { Dispatchers.Main }
+    single(named(DispatcherQualifiers.DEFAULT)) { Dispatchers.Default }
 }
 
 /**
- * Qualifier para inyectar Dispatchers.IO
+ * Constantes para evitar magic strings en named qualifiers
  */
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class IoDispatcher
-
-/**
- * Qualifier para inyectar Dispatchers.Main
- */
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class MainDispatcher
-
-/**
- * Qualifier para inyectar Dispatchers.Default
- */
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class DefaultDispatcher
+object DispatcherQualifiers {
+    const val IO = "IoDispatcher"
+    const val MAIN = "MainDispatcher"
+    const val DEFAULT = "DefaultDispatcher"
+}
