@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 
@@ -23,7 +24,14 @@ class NetworkModule {
     fun provider(): OkHttpClient {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        return OkHttpClient.Builder().addInterceptor(interceptor).build()
+        
+        return OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            // Zantetsuken Arquitectónico: Timeouts optimizados para balance luz/oscuridad
+            .connectTimeout(5, TimeUnit.SECONDS)  // Tiempo para establecer conexión TCP
+            .readTimeout(5, TimeUnit.SECONDS)     // Tiempo para leer respuesta del servidor
+            .writeTimeout(5, TimeUnit.SECONDS)    // Tiempo para enviar request al servidor
+            .build()
     }
 
     @Provides

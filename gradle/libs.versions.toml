@@ -19,6 +19,8 @@ gson = "2.10.1"
 interceptor = "4.11.0"
 coil = "2.7.0"
 room = "2.6.1"
+mockk = "1.13.8"
+coroutines-test = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +51,8 @@ coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil"}
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}
 room-compile = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk"}
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

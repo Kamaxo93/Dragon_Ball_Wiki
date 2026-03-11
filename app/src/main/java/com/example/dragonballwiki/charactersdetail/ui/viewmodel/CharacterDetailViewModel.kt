@@ -13,14 +13,28 @@ import com.example.dragonballwiki.charactersdetail.ui.uistate.CharacterDetailSta
 import com.example.dragonballwiki.core.Constant.CHARACTER_ID
 import com.example.dragonballwiki.core.async.AsyncError
 import com.example.dragonballwiki.core.async.AsyncResult
+import com.example.dragonballwiki.core.di.IoDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * ViewModel para el detalle de personajes.
+ * 
+ * Mejoras aplicadas:
+ * - Inyección de CoroutineDispatcher para facilitar testing
+ * - Eliminado nested Flow collectors para prevenir memory leaks
+ * - Uso de Main dispatcher para actualizaciones de estado UI (thread safety)
+ * - withContext(ioDispatcher) solo para operaciones de BD local
+ */
 @HiltViewModel
 class CharacterDetailViewModel @Inject constructor(
     private val getCharacterDetailUseCase: GetCharacterDetailUseCase,
     private val getCharacterDetailErrorUseCase: GetCharacterDetailErrorUseCase,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -35,14 +49,15 @@ class CharacterDetailViewModel @Inject constructor(
 
     private fun getCharacterDetail(id: String) {
         viewModelScope.launch {
-            getCharacterDetailUseCase(id).collect {
-                when (it) {
+            getCharacterDetailUseCase(id).collect { result ->
+                when (result) {
                     is AsyncResult.Success -> {
-                        state = state.copy(characterDetail = it.data, loading = false, error = null)
+                        state = state.copy(characterDetail = result.data, loading = false, error = null)
                     }
 
                     is AsyncResult.Error -> {
-                        when (it.error) {
+                        // Fallback: try to get character from local list database
+                        when (result.error) {
                             AsyncError.ConnectionError,
                             is AsyncError.CustomError,
                             AsyncError.DataParseError,
@@ -50,13 +65,15 @@ class CharacterDetailViewModel @Inject constructor(
                             is AsyncError.ServerError,
                             AsyncError.TimeoutError,
                             is AsyncError.UnknownError -> {
-                                getCharacterDetailErrorUseCase(id).collect {
-                                    state = state.copy(
-                                        characterDetail = it.toVO(),
-                                        loading = false,
-                                        error = null
-                                    )
+                                // Use withContext for IO operation only
+                                val localCharacter = withContext(ioDispatcher) {
+                                    getCharacterDetailErrorUseCase(id).first()
                                 }
+                                state = state.copy(
+                                    characterDetail = localCharacter.toVO(),
+                                    loading = false,
+                                    error = null
+                                )
                             }
                         }
                     }

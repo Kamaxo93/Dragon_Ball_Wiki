@@ -30,7 +30,7 @@ fun NavigationHost() {
         }
 
         composable(
-            route = "${Routes.CharactersDetail.route}/?id={${NavArgs.CharacterId.key}}",
+            route = "${Routes.CharactersDetail.route}/{${NavArgs.CharacterId.key}}",
             arguments = listOf(
                 navArgument(NavArgs.CharacterId.key) {
                     type = NavType.StringType

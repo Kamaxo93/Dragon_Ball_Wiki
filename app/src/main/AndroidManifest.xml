@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/icon_app_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DragonBallWiki"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
