@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.core
 
+import android.util.Log
 import com.example.dragonballwiki.core.async.AsyncError
 import com.example.dragonballwiki.core.async.AsyncResult
 import com.google.gson.Gson
@@ -13,19 +14,29 @@ import java.net.UnknownHostException
 import kotlin.coroutines.cancellation.CancellationException
 
 object RepositoryErrorManager {
+    
+    private const val TAG = "ErrorManager"
 
-    suspend inline fun <T> wrap(crossinline block: suspend () -> T): Flow<AsyncResult<T>> =
+    suspend fun <T> wrap(block: suspend () -> T): Flow<AsyncResult<T>> =
         flow {
+            Log.d(TAG, "🔒 ErrorManager.wrap() - Emitting Loading state")
             emit(AsyncResult.Loading())
             try {
-                emit(AsyncResult.Success(block()))
+                Log.d(TAG, "🚀 ErrorManager.wrap() - Executing network block")
+                val result = block()
+                Log.i(TAG, "✅ ErrorManager.wrap() - Block executed successfully")
+                emit(AsyncResult.Success(result))
 
             } catch (e: CancellationException) {
                 // CancellationException should never be intercepted, throw it as-is
+                Log.w(TAG, "⚠️ CancellationException caught - Re-throwing", e)
                 throw e
 
             } catch (e: Exception) {
-                emit(AsyncResult.Error(e.toAsyncError()))
+                val asyncError = e.toAsyncError()
+                Log.e(TAG, "❌ ErrorManager.wrap() - Exception caught: ${e::class.simpleName}", e)
+                Log.e(TAG, "❌ Converted to AsyncError: $asyncError")
+                emit(AsyncResult.Error(asyncError))
             }
         }
 

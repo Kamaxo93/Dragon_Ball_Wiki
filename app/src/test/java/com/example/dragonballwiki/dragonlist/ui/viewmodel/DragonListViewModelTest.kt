@@ -8,10 +8,14 @@ import com.example.dragonballwiki.dragonlist.domain.usecase.AddCharactersLocalDa
 import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -42,8 +46,14 @@ class DragonListViewModelTest {
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(testDispatcher)
         getCharacterListUseCase = mockk()
         addCharactersLocalDataBaseUseCase = mockk()
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     private fun createTestCharacterBO(

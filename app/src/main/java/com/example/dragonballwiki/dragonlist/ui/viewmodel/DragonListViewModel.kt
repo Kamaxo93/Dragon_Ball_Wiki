@@ -1,5 +1,6 @@
 package com.example.dragonballwiki.dragonlist.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,7 +13,6 @@ import com.example.dragonballwiki.dragonlist.domain.usecase.GetCharacterListUseC
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.model.toVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -25,91 +25,148 @@ import kotlinx.coroutines.launch
  * - Constructor normal - Koin inyecta automáticamente
  * 
  * Mejoras aplicadas:
- * - Inyección de CoroutineDispatcher para facilitar testing
  * - Eliminado nested Flow collectors para prevenir memory leaks
  * - Eliminado withContext innecesario (state updates son main-safe)
+ * - Repository maneja threading con flowOn(Dispatchers.IO)
+ * - ViewModel lanza coroutines en Main (viewModelScope default)
  */
 class DragonListViewModel(
     private val getCharacterListUseCase: GetCharacterListUseCase,
-    private val addCharactersLocalDataBaseUseCase: AddCharactersLocalDataBaseUseCase,
-    private val ioDispatcher: CoroutineDispatcher
+    private val addCharactersLocalDataBaseUseCase: AddCharactersLocalDataBaseUseCase
 ) : ViewModel() {
+    
+    companion object {
+        private const val TAG = "DragonList-VM"
+    }
+    
     var state by mutableStateOf(DragonListState())
         private set
 
-    private var characterList = listOf<CharacterVO>()
-
     init {
+        Log.d(TAG, "🎬 ViewModel initialized - Starting dataState()")
         dataState()
     }
 
     private fun dataState() {
-        viewModelScope.launch(ioDispatcher) {
-            state = state.copy(error = null, dragonListState = null, loading = true)
+        Log.d(TAG, "📡 dataState() called - Launching coroutine on Main (viewModelScope default)")
+        viewModelScope.launch {
+            Log.d(TAG, "🧵 Coroutine running on ${Thread.currentThread().name}")
+            Log.d(TAG, "🔄 Setting initial Loading state")
+            state = state.copy(
+                error = null,
+                characters = emptyList(),
+                filteredCharacters = emptyList(),
+                loadingState = com.example.dragonballwiki.core.ui.LoadingState.Loading
+            )
             
+            Log.d(TAG, "🔍 Calling getCharacterListUseCase() to observe local DB")
             getCharacterListUseCase().collect { characters ->
+                Log.d(TAG, "📦 Flow emission received on ${Thread.currentThread().name} - Characters count: ${characters.size}")
                 if (characters.isEmpty()) {
+                    Log.w(TAG, "⚠️ Local DB is empty - Fetching from remote API")
                     // Fetch from remote if local DB is empty
-                    val result = addCharactersLocalDataBaseUseCase().first()
+                    // Use first { } predicate to skip Loading state and wait for Success/Error
+                    val result = addCharactersLocalDataBaseUseCase().first { it !is AsyncResult.Loading }
+                    Log.d(TAG, "🌐 Remote fetch completed - Result: ${result::class.simpleName}")
                     when (result) {
-                        is AsyncResult.Error -> state = state.copy(
-                            error = R.string.text_error_service,
-                            dragonListState = null,
-                            loading = false
-                        )
+                        is AsyncResult.Error -> {
+                            Log.e(TAG, "❌ Error fetching characters from API: ${result.error}")
+                            state = state.copy(
+                                error = com.example.dragonballwiki.core.ui.UiText.StringResource(
+                                    R.string.text_error_service
+                                ),
+                                characters = emptyList(),
+                                filteredCharacters = emptyList(),
+                                loadingState = com.example.dragonballwiki.core.ui.LoadingState.Idle
+                            )
+                        }
 
-                        is AsyncResult.Loading -> state =
-                            state.copy(error = null, dragonListState = null, loading = true)
+                        is AsyncResult.Loading -> {
+                            Log.d(TAG, "⏳ Still loading from API...")
+                            state = state.copy(
+                                error = null,
+                                loadingState = com.example.dragonballwiki.core.ui.LoadingState.Loading
+                            )
+                        }
 
                         is AsyncResult.Success -> {
+                            Log.i(TAG, "✅ Successfully fetched and saved to DB - Waiting for Room to emit...")
                             // Flow will auto-update when Room data changes
                             // no-op
                         }
                     }
                 } else {
-                    characterList = characters.toVO()
+                    Log.i(TAG, "✅ Characters found in local DB - Updating UI state")
+                    val characterVOList = characters.toVO()
                     state = state.copy(
-                        dragonListState = characterList,
-                        loading = false,
+                        characters = characterVOList,
+                        filteredCharacters = if (state.searchQuery.isBlank()) {
+                            characterVOList
+                        } else {
+                            characterVOList.filter { 
+                                it.name.contains(state.searchQuery, ignoreCase = true) 
+                            }
+                        },
+                        loadingState = com.example.dragonballwiki.core.ui.LoadingState.Idle,
                         error = null
                     )
+                    Log.d(TAG, "🎉 UI State updated - Characters: ${characterVOList.size}, Filtered: ${state.filteredCharacters.size}")
                 }
             }
         }
     }
 
     fun searchCharacter(nameCharacter: String) {
-        state = state.copy(dragonListState =
-        if (nameCharacter.isNotBlank()) {
-            characterList.filter {
-                it.name.contains(
-                    nameCharacter,
-                    true
-                )
+        val filteredList = if (nameCharacter.isNotBlank()) {
+            state.characters.filter {
+                it.name.contains(nameCharacter, ignoreCase = true)
             }
         } else {
-            characterList
-        }, loading = false, error = null)
+            state.characters
+        }
+        
+        state = state.copy(
+            searchQuery = nameCharacter,
+            filteredCharacters = filteredList,
+            loadingState = com.example.dragonballwiki.core.ui.LoadingState.Idle,
+            error = null
+        )
     }
 
     fun reloadCharacterData() {
-        viewModelScope.launch(ioDispatcher) {
-            if (characterList.isEmpty()) {
-                val result = addCharactersLocalDataBaseUseCase().first()
-                when (result) {
-                    is AsyncResult.Error -> state = state.copy(
-                        error = R.string.text_error_service,
-                        dragonListState = null,
-                        loading = false
+        Log.d(TAG, "🔄 reloadCharacterData() called - Refreshing data")
+        viewModelScope.launch {
+            Log.d(TAG, "🧵 Reload running on ${Thread.currentThread().name}")
+            state = state.copy(loadingState = com.example.dragonballwiki.core.ui.LoadingState.Refreshing)
+            
+            Log.d(TAG, "🌐 Fetching fresh data from API")
+            val result = addCharactersLocalDataBaseUseCase().first()
+            Log.d(TAG, "📡 Reload result: ${result::class.simpleName}")
+            when (result) {
+                is AsyncResult.Error -> {
+                    Log.e(TAG, "❌ Error reloading data: ${result.error}")
+                    state = state.copy(
+                        error = com.example.dragonballwiki.core.ui.UiText.StringResource(
+                            R.string.text_error_service
+                        ),
+                        loadingState = com.example.dragonballwiki.core.ui.LoadingState.Idle
                     )
+                }
 
-                    is AsyncResult.Loading -> state =
-                        state.copy(error = null, dragonListState = null, loading = true)
+                is AsyncResult.Loading -> {
+                    Log.d(TAG, "⏳ Still loading during reload...")
+                    state = state.copy(
+                        error = null,
+                        loadingState = com.example.dragonballwiki.core.ui.LoadingState.Refreshing
+                    )
+                }
 
-                    is AsyncResult.Success -> {
-                        // La lista al ser un flow, room la actualiza el state si observa algún cambio
-                        //no-op
-                    }
+                is AsyncResult.Success -> {
+                    Log.i(TAG, "✅ Reload successful - Room will auto-update")
+                    // Flow will auto-update when Room data changes
+                    state = state.copy(
+                        loadingState = com.example.dragonballwiki.core.ui.LoadingState.Idle
+                    )
                 }
             }
         }

@@ -6,46 +6,50 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dragonballwiki.R
+import com.example.dragonballwiki.core.ui.LoadingState
 import com.example.dragonballwiki.dragonlist.ui.compose.ImageCharacter
-import com.example.dragonballwiki.dragonlist.ui.compose.NameCharacter
-import com.example.dragonballwiki.dragonlist.ui.compose.TextBreedAndGenreCharacter
-import com.example.dragonballwiki.dragonlist.ui.compose.TextOtherData
 import com.example.dragonballwiki.dragonlist.ui.model.CharacterVO
 import com.example.dragonballwiki.dragonlist.ui.uistate.DragonListState
 import com.example.dragonballwiki.dragonlist.ui.viewmodel.DragonListViewModel
-import kotlinx.coroutines.launch
+import com.example.dragonballwiki.ui.components.EmptyStateCompose
+import com.example.dragonballwiki.ui.components.ErrorStateCompose
+import com.example.dragonballwiki.ui.theme.ImageSizes
+import com.example.dragonballwiki.ui.theme.Spacing
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -57,58 +61,32 @@ fun DragonListScreen(
     var searchCharacter by rememberSaveable {
         mutableStateOf("")
     }
-    val isSearchCharacters by rememberSaveable {
+    var isSearchActive by rememberSaveable {
         mutableStateOf(false)
     }
+
     when {
         state.error != null -> {
-            CharactersContainerError {
-                dragonListViewModel.reloadCharacterData()
-            }
+            ErrorStateCompose(
+                title = state.error.asString(),
+                description = stringResource(R.string.dragon_list_label_error),
+                onRetryClick = { dragonListViewModel.reloadCharacterData() }
+            )
         }
 
-        state.loading -> {
+        state.loadingState == LoadingState.Loading -> {
             LoginBall(stringResource(R.string.dragon_list_label_loading))
         }
 
-        state.dragonListState != null -> {
+        else -> {
             CharactersContainer(
-                searchCharacter,
-                dragonListViewModel,
-                isSearchCharacters,
-                state,
-                onClickElement
-            ) {
-                searchCharacter = it
-            }
-        }
-    }
-}
-
-@Composable
-private fun CharactersContainerError(
-    onReloadClicked: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.character_list_empty),
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 32.sp,
-            modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-
-        Button(modifier = Modifier.padding(16.dp).background(MaterialTheme.colorScheme.primary), onClick = {
-            onReloadClicked()
-        }) {
-            Text(
-                text = stringResource(R.string.dragon_list_label_error),
+                searchCharacter = searchCharacter,
+                dragonListViewModel = dragonListViewModel,
+                isSearchActive = isSearchActive,
+                state = state,
+                onClickElement = onClickElement,
+                onSearchActiveChange = { isSearchActive = it },
+                searchCharacterChange = { searchCharacter = it }
             )
         }
     }
@@ -119,65 +97,112 @@ private fun CharactersContainerError(
 private fun CharactersContainer(
     searchCharacter: String,
     dragonListViewModel: DragonListViewModel,
-    isSearchCharacters: Boolean,
+    isSearchActive: Boolean,
     state: DragonListState,
     onClickElement: (String) -> Unit,
+    onSearchActiveChange: (Boolean) -> Unit,
     searchCharacterChange: (String) -> Unit
 ) {
-    var isSearchCharacters1 = isSearchCharacters
-    Column(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize()
-    ) {
-        SearchBar(
-            query = searchCharacter,
-            placeholder = {
-                Text(text = stringResource(R.string.search_character))
-            },
-            onQueryChange = {
-                searchCharacterChange(it)
-                dragonListViewModel.searchCharacter(nameCharacter = it)
-                isSearchCharacters1 = true
-            },
-            onSearch = {
-                dragonListViewModel.searchCharacter(nameCharacter = it)
-                isSearchCharacters1 = true
-            },
-            active = true,
-            onActiveChange = {},
-            shadowElevation = 8.dp
-        ) {
-            DragonBallList(
-                characters = state.dragonListState,
-                isSearchCharacters = isSearchCharacters1,
-                onClickElement = {
-                    onClickElement(
-                        it
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.app_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
                     )
-                    isSearchCharacters1 = false
-                })
+                },
+                actions = {
+                    IconButton(onClick = { dragonListViewModel.reloadCharacterData() }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.content_description_refresh),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize()
+        ) {
+            SearchBar(
+                query = searchCharacter,
+                placeholder = {
+                    Text(text = stringResource(R.string.search_character))
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.content_description_search)
+                    )
+                },
+                onQueryChange = {
+                    searchCharacterChange(it)
+                    dragonListViewModel.searchCharacter(nameCharacter = it)
+                },
+                onSearch = {
+                    dragonListViewModel.searchCharacter(nameCharacter = it)
+                    onSearchActiveChange(false)
+                },
+                active = isSearchActive,
+                onActiveChange = { onSearchActiveChange(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = if (isSearchActive) 0.dp else Spacing.medium,
+                        vertical = Spacing.small
+                    )
+            ) {
+                DragonBallList(
+                    characters = state.filteredCharacters,
+                    searchCharacter = searchCharacter,
+                    onClickElement = {
+                        onClickElement(it)
+                        onSearchActiveChange(false)
+                    }
+                )
+            }
+
+            if (!isSearchActive) {
+                DragonBallList(
+                    characters = state.filteredCharacters,
+                    searchCharacter = searchCharacter,
+                    onClickElement = onClickElement
+                )
+            }
         }
     }
 }
 
 @Composable
 fun DragonBallList(
-    characters: List<CharacterVO>?,
-    isSearchCharacters: Boolean,
+    characters: List<CharacterVO>,
+    searchCharacter: String,
     onClickElement: (String) -> Unit
 ) {
-    val state = rememberLazyListState(0)
-    val coroutineScope = rememberCoroutineScope()
-    LazyColumn(state = state) {
-        if (isSearchCharacters) {
-            coroutineScope.launch {
-                state.scrollToItem(0)
-            }
-        }
-        items(characters ?: listOf(), key = { it.id }) {
-            ItemCharacter(character = it) {
-                onClickElement(it)
+    if (characters.isEmpty() && searchCharacter.isNotEmpty()) {
+        EmptyStateCompose(
+            title = stringResource(R.string.no_characters_found),
+            description = stringResource(R.string.search_hint)
+        )
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(characters, key = { it.id }) {
+                ItemCharacter(character = it) {
+                    onClickElement(it)
+                }
             }
         }
     }
@@ -187,32 +212,62 @@ fun DragonBallList(
 fun ItemCharacter(character: CharacterVO, onClickElement: (String) -> Unit) {
     Card(
         Modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
-            .clickable { onClickElement(character.id.toString()) }) {
-        ImageCharacter(
-            urlImage = character.image,
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.medium, vertical = Spacing.small)
+            .clickable { onClickElement(character.id.toString()) }
+    ) {
+        Row(
             modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.CenterHorizontally)
-                .size(250.dp)
-
-        )
-        InfoCharacter(
-            character,
-            Modifier
-        )
+                .fillMaxWidth()
+                .padding(Spacing.small),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ImageCharacter(
+                urlImage = character.image,
+                modifier = Modifier
+                    .size(ImageSizes.characterListThumbnail)
+                    .padding(Spacing.small)
+            )
+            
+            InfoCharacter(
+                character = character,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = Spacing.small)
+            )
+        }
     }
 }
 
 @Composable
 fun InfoCharacter(character: CharacterVO, modifier: Modifier) {
-    Column(modifier.fillMaxWidth()) {
-        NameCharacter(character.name, modifier = Modifier.align(Alignment.CenterHorizontally))
-        TextBreedAndGenreCharacter(genre = character.gender, breed = character.race)
-        TextOtherData(stringResource(R.string.base_ki), character.ki)
-        TextOtherData(stringResource(R.string.maxi_ki), character.maxKi)
-        TextOtherData(stringResource(R.string.affiliation), character.affiliation)
+    Column(modifier = modifier) {
+        Text(
+            text = character.name,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 20.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        
+        Text(
+            text = "${character.race} • ${character.gender}",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = Spacing.extraSmall)
+        )
+        
+        if (character.ki.isNotEmpty() && character.ki != stringResource(R.string.value_unknown).lowercase()) {
+            Text(
+                text = stringResource(R.string.stat_ki, character.ki),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(top = Spacing.extraSmall)
+            )
+        }
     }
 }
 
@@ -227,7 +282,7 @@ fun LoginBall(message: String) {
         Box {
             CircularProgressIndicator(
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(ImageSizes.loadingIndicator)
                     .align(Alignment.Center),
             )
             Image(
@@ -235,7 +290,7 @@ fun LoginBall(message: String) {
                 contentDescription = stringResource(id = R.string.content_description_ball_loading),
                 Modifier
                     .align(Alignment.Center)
-                    .size(280.dp)
+                    .size(ImageSizes.loadingDragonBall)
             )
         }
         Text(
@@ -245,10 +300,4 @@ fun LoginBall(message: String) {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PreviewRecycler() {
-    CharactersContainerError() {}
 }

@@ -10,5 +10,7 @@ data class CharacterDetailVO(
     val maxKi: String,
     val name: String,
     val race: String,
-    val transformations: List<Transformation>
+    val transformations: List<Transformation>,
+    val isFromCache: Boolean = false,
+    val lastUpdated: Long? = null
 )

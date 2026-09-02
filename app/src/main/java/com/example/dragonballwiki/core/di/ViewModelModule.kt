@@ -16,8 +16,7 @@ val viewModelModule = module {
     viewModel {
         DragonListViewModel(
             getCharacterListUseCase = get(),
-            addCharactersLocalDataBaseUseCase = get(),
-            ioDispatcher = get(named(DispatcherQualifiers.IO))
+            addCharactersLocalDataBaseUseCase = get()
         )
     }
     

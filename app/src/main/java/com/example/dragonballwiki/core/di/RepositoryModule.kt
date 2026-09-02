@@ -19,11 +19,12 @@ val repositoryModule = module {
         )
     }
     
-    // CharacterDetailRepository - Singleton
+    // CharacterDetailRepository - Singleton con caché inteligente
     single<CharacterDetailRepository> {
         CharacterDetailRepositoryImpl(
             remoteDataSource = get(),
-            localDataSource = get()
+            localDataSource = get(),
+            detailLocalDataSource = get()
         )
     }
 }

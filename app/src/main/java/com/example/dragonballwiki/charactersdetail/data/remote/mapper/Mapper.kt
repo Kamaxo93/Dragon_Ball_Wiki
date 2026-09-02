@@ -17,7 +17,9 @@ fun CharacterDetailResponse.toVO(): CharacterDetailVO =
         maxKi = maxKi,
         name = name,
         race = race,
-        transformations = transformations.toVO()
+        transformations = transformations.toVO(),
+        isFromCache = false,
+        lastUpdated = System.currentTimeMillis()
     )
 
 private fun List<TransformationResponse>.toVO(): List<Transformation> =
@@ -38,5 +40,7 @@ fun CharacterEntity.toVO(): CharacterDetailVO =
         maxKi = maxKi,
         name = name,
         race = race,
-        transformations = emptyList()
+        transformations = emptyList(),
+        isFromCache = true,
+        lastUpdated = null
     )

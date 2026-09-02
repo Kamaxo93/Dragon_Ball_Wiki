@@ -1,5 +1,7 @@
 package com.example.dragonballwiki.core.di
 
+import com.example.dragonballwiki.charactersdetail.data.local.datasource.CharacterDetailLocalDataSource
+import com.example.dragonballwiki.charactersdetail.data.local.datasource.CharacterDetailLocalDataSourceImpl
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSource
 import com.example.dragonballwiki.charactersdetail.data.remote.datasource.CharacterDetailRemoteDataSourceImpl
 import com.example.dragonballwiki.dragonlist.data.local.datasource.DragonListLocalDataSource
@@ -26,5 +28,10 @@ val dataSourceModule = module {
     // DragonListLocalDataSource - Singleton
     single<DragonListLocalDataSource> {
         DragonListLocalDataSourceImpl(dao = get())
+    }
+    
+    // CharacterDetailLocalDataSource - Singleton
+    single<CharacterDetailLocalDataSource> {
+        CharacterDetailLocalDataSourceImpl(dao = get())
     }
 }

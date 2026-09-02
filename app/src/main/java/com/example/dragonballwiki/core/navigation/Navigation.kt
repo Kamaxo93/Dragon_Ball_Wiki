@@ -36,7 +36,9 @@ fun NavigationHost() {
                     type = NavType.StringType
                 })
         ) {
-            CharacterDetailScreen()
+            CharacterDetailScreen(
+                onBackClick = { navigationController.navigateUp() }
+            )
         }
     }
 

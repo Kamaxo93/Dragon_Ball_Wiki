@@ -1,15 +1,54 @@
 <resources>
+    <!-- App -->
     <string name="app_name">Dragon Ball Wiki</string>
+    <string name="app_title">🐉 Dragon Ball Wiki</string>
+
+    <!-- General -->
     <string name="text_error_service">Error en el servicio</string>
-    <string name="character_list_empty">"La lista está vacia"</string>
-    <string name="content_description_ball_loading">imagen del personaje</string>
-    <string name="dragon_list_label_loading">Obteniendo personajes…</string>
-    <string name="character_detail_label_loading">Obteniendo datos del personaje</string>
-    <string name="dragon_list_label_error">Reintentar</string>
-    <string name="base_ki">Base KI</string>
-    <string name="maxi_ki">Total KI</string>
-    <string name="affiliation">Afiliación</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="value_unknown">Desconocido</string>
+    <string name="action_retry">Reintentar</string>
+
+    <!-- Character List -->
+    <string name="character_list_empty">La lista está vacía</string>
+    <string name="no_characters_found">No se encontraron personajes</string>
+    <string name="search_hint">Intenta buscar con un nombre diferente</string>
     <string name="search_character">Buscar personaje</string>
+    <string name="dragon_list_label_loading">Obteniendo personajes…</string>
+    <string name="dragon_list_label_error">Reintentar</string>
+
+    <!-- Character Detail -->
+    <string name="character_detail_label_loading">Obteniendo datos del personaje</string>
     <string name="character_detail_label_transformations">Transformaciones</string>
+    <string name="error_loading_character">Error al cargar el personaje</string>
+    <string name="section_stats">Estadísticas del Personaje</string>
+    <string name="section_description">Descripción</string>
+
+    <!-- Character Stats -->
+    <string name="stat_race">Raza</string>
+    <string name="stat_gender">Género</string>
+    <string name="stat_base_ki">Ki Base</string>
+    <string name="base_ki">Base KI</string>
+    <string name="stat_max_ki">Ki Máximo</string>
+    <string name="maxi_ki">Total KI</string>
+    <string name="stat_affiliation">Afiliación</string>
+    <string name="affiliation">Afiliación</string>
+    <string name="stat_ki">Ki: %s</string>
+
+    <!-- Cache Status -->
+    <string name="cache_updated_today">Actualizado hoy</string>
+    <string name="cache_outdated">Los datos pueden estar desactualizados (%d días)</string>
+
+    <!-- Content Descriptions -->
+    <string name="content_description_ball_loading">imagen del personaje</string>
+    <string name="content_description_back">Volver</string>
+    <string name="content_description_refresh">Actualizar lista de personajes</string>
+    <string name="content_description_search">Buscar personajes</string>
+
+    <!-- Plurals -->
+    <plurals name="cache_days_ago">
+        <item quantity="one">Actualizado hace %d día</item>
+        <item quantity="other">Actualizado hace %d días</item>
+    </plurals>
 
 </resources>
